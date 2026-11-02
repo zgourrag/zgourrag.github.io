@@ -1,34 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zakaryae — Code & Systems</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zakaryae OS</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <header>
-    <h1>Zakaryae</h1>
-    <p class="tagline">Software Engineering @ 1337 | Systems & Growth</p>
-  </header>
+  <!-- Desktop Icons -->
+  <main class="desktop">
+    <div class="desktop-icon" ondblclick="openWindow('about')">
+      <div class="icon-img">📄</div>
+      <span class="icon-label">about.txt</span>
+    </div>
 
-  <main>
-    <section>
-      <p>Building at the intersection of low-level software engineering and growth strategy.</p>
-    </section>
+    <div class="desktop-icon" ondblclick="openWindow('work')">
+      <div class="icon-img">📁</div>
+      <span class="icon-label">work/</span>
+    </div>
 
-    <hr />
-
-    <section>
-      <h2>Currently</h2>
-      <ul>
-        <li>Studying C, system mechanics, and memory allocation @ 1337</li>
-        <li>Exploring web security and network protocols</li>
-        <li>Building digital growth architectures</li>
-      </ul>
-    </section>
+    <div class="desktop-icon" ondblclick="openWindow('blog')">
+      <div class="icon-img">📁</div>
+      <span class="icon-label">notes/</span>
+    </div>
   </main>
 
+  <!-- Windows (Hidden by default) -->
+  
+  <!-- About Window -->
+  <div class="window" id="window-about">
+    <div class="window-header">
+      <span class="window-title">📄 about.txt - Notepad</span>
+      <button class="close-btn" onclick="closeWindow('about')">X</button>
+    </div>
+    <div class="window-content text-file">
+      <p>System User: Zakaryae</p>
+      <p>Status: Student @ 1337</p>
+      <br>
+      <p>Exploring low-level systems, C programming, web security, and digital strategy.</p>
+      <p>I combine analytical systems thinking with Swiss International Style visual design.</p>
+    </div>
+  </div>
+
+  <!-- Work Folder Window -->
+  <div class="window" id="window-work">
+    <div class="window-header">
+      <span class="window-title">📁 C:\Zakaryae\Work</span>
+      <button class="close-btn" onclick="closeWindow('work')">X</button>
+    </div>
+    <div class="window-toolbar">File Edit View Help</div>
+    <div class="window-content folder-view">
+      <div class="file-item">
+        <div class="icon-img">⚙️</div>
+        <span>libft.c</span>
+      </div>
+      <div class="file-item">
+        <div class="icon-img">🎨</div>
+        <span>balsam.exe</span>
+      </div>
+      <div class="file-item">
+        <div class="icon-img">📈</div>
+        <span>ads_strategy.pdf</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes Folder Window -->
+  <div class="window" id="window-blog">
+    <div class="window-header">
+      <span class="window-title">📁 C:\Zakaryae\Notes</span>
+      <button class="close-btn" onclick="closeWindow('blog')">X</button>
+    </div>
+    <div class="window-toolbar">File Edit View Help</div>
+    <div class="window-content folder-view">
+      <div class="file-item">
+        <div class="icon-img">🔒</div>
+        <span>web_security.md</span>
+      </div>
+      <div class="file-item">
+        <div class="icon-img">🎵</div>
+        <span>vmpc2000xl.txt</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Taskbar -->
+  <header class="taskbar">
+    <div class="taskbar-left">
+      <button class="start-btn" onclick="toggleStartMenu()">
+        <span class="system-dot"></span> START
+      </button>
+      <div class="start-menu" id="startMenu">
+        <div class="start-menu-sidebar">ZAKARYAE OS</div>
+        <div class="start-menu-items">
+          <div class="menu-item" onclick="openWindow('about'); toggleStartMenu();">📄 about.txt</div>
+          <div class="menu-item" onclick="openWindow('work'); toggleStartMenu();">📁 work</div>
+          <div class="menu-divider"></div>
+          <a href="mailto:contact@zakaryae.me" class="menu-item">✉️ Mail</a>
+          <a href="https://github.com" target="_blank" class="menu-item">🐙 GitHub</a>
+        </div>
+      </div>
+    </div>
+    <div class="taskbar-right">
+      <span class="status-tag">Morocco (GMT+1)</span>
+      <span id="systemClock">00:00</span>
+    </div>
+  </header>
+
+  <script src="script.js"></script>
 </body>
 </html>
