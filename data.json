@@ -1,9 +1,9 @@
 {
   "siteSettings": {
-    "siteTitle": "zakaryae-os // portfolio",
+    "siteTitle": "be curious.",
     "profileName": "Zakaryae",
     "profileIntro": "Software Engineering Student @ 1337 | Former Creative Director",
-    "profileImage": "",
+    "profileImage": "/images/uploads/7327C8AB-91C9-4E59-81AD-F503E324A664.png",
     "cv": "ZAKARYAE\nCreative technologist -> software engineer\n\n[BEFORE] CREATIVE DIRECTION\nDigital marketing, brand identity and campaigns. I shaped the facade of products, from the first idea to the last pixel.\n\n[NOW] 1337, MOROCCO\nStudying software engineering. C, pointers, memory management and data structures. Rebuilding libft from scratch and learning how code meets hardware.\n\n[PRINCIPLE]\nStrip the abstraction. Understand allocation, ownership and failure modes first.",
     "quoteText": "The map is not the territory.",
     "quoteAuthor": "Alfred Korzybski",
