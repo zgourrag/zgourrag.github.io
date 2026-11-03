@@ -1,0 +1,52 @@
+{
+  "work": [
+    {
+      "title": "Project One",
+      "summary": "Short description of what it is.",
+      "images": [
+        "https://placehold.co/900x500?text=Project+One+1",
+        "https://placehold.co/900x500?text=Project+One+2"
+      ],
+      "description": "<p>The problem, your role, and the result go here.</p>\n\n<p>Add as many paragraphs as you like. <strong>HTML works.</strong></p>"
+    },
+    {
+      "title": "Project Two",
+      "summary": "Tools used, what you learned.",
+      "images": [
+        "https://placehold.co/900x500?text=Project+Two+1",
+        "https://placehold.co/900x500?text=Project+Two+2",
+        "https://placehold.co/900x500?text=Project+Two+3"
+      ],
+      "description": "<p>Explain the approach, the tools and what you would do differently.</p>"
+    },
+    {
+      "title": "Project Three",
+      "summary": "A one-line pitch goes here.",
+      "images": [
+        "https://placehold.co/900x500?text=Project+Three+1"
+      ],
+      "description": "<p>Write the full case study here.</p>"
+    }
+  ],
+  "posts": [
+    {
+      "title": "hello_world.txt",
+      "date": "2026-11-03",
+      "body": "I am Zakaryae. If you are reading this, you have stumbled into my local environment.\n\nFor years, my work existed entirely in the high-level realm—digital marketing, creative direction, and building brand identities from the ground up. I was shaping the facade, but eventually, I realized I wanted to build the infrastructure.\n\nSo I stripped away the abstractions. I am currently studying software engineering at 1337 in Morocco, trading brand strategy for low-level mechanics and first-principles problem solving.\n\nThis OS is my digital workspace. Welcome to the machine."
+    },
+    {
+      "title": "libft_and_raw_memory.txt",
+      "date": "2026-10-25",
+      "body": "A couple of weeks into rebuilding the C standard library from scratch for my libft project, and my perspective on computing has fundamentally shifted.\n\nWhen you are forced to write your own memory allocation routines and string manipulation functions, the magic of high-level languages completely disappears. You realize everything is just bytes, pointers, and the brutal honesty of the compiler.\n\nImplementing the singly linked list (t_list) functions was the real turning point. It forces you to visualize exactly where your data lives in memory and how pointers connect the dots.\n\nThere is a specific kind of beauty in low-level C programming. It is just you and the raw mechanics of the hardware."
+    }
+  ],
+  "wip": [
+    {
+      "file": "libft.h",
+      "type": "C",
+      "status": "in progress",
+      "note": "Initial draft done, revision time",
+      "date": "2026-11-03"
+    }
+  ]
+}

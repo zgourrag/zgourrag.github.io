@@ -1,0 +1,63 @@
+# Decap CMS config for zakaryae.me/master
+backend:
+  name: github
+  repo: zgourrag/my-repo-name            # TODO: your real repository
+  branch: main
+  # GitHub Pages has no server, so GitHub OAuth needs a small proxy. Put its URL here.
+  # (e.g. a Cloudflare Worker or a Netlify site running an OAuth provider for Decap.)
+  base_url: https://YOUR-OAUTH-PROXY.example.com
+  auth_endpoint: auth
+
+# For local testing run `npx decap-server`, then uncomment:
+# local_backend: true
+
+site_url: https://zakaryae.me
+display_url: https://zakaryae.me
+publish_mode: simple
+media_folder: images/uploads             # where uploaded photos are committed (repo path)
+public_folder: /images/uploads           # how data.json refers to them on the site
+
+collections:
+  - name: content
+    label: Site Content
+    files:
+      # ONE file entry on purpose: data.json holds all lists, so each entry must save the whole file.
+      - name: data
+        label: Portfolio, Blog and Unfinished Projects
+        file: data.json
+        fields:
+          - label: Portfolio projects
+            name: work
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: Card summary, name: summary, widget: string }
+              - label: Images (shown in order in the case study; the first is the thumbnail)
+                name: images
+                widget: list
+                required: false
+                field: { label: Image, name: image, widget: image }
+              - { label: Description, name: description, widget: text,
+                  hint: "Separate paragraphs with a blank line. A paragraph starting with < is treated as HTML." }
+
+          - label: Blog posts
+            name: posts
+            widget: list
+            summary: "{{fields.date}} - {{fields.title}}"
+            fields:
+              - { label: Title (file name style, e.g. my_post.txt), name: title, widget: string }
+              - { label: Date, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+              - { label: Body, name: body, widget: text, hint: "Separate paragraphs with a blank line." }
+
+          - label: Unfinished projects
+            name: wip
+            widget: list
+            required: false
+            summary: "{{fields.file}}"
+            fields:
+              - { label: File name, name: file, widget: string }
+              - { label: Type, name: type, widget: string }
+              - { label: Status, name: status, widget: string }
+              - { label: Note, name: note, widget: string }
+              - { label: Modified, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
