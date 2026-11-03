@@ -57,31 +57,12 @@
   },
   "work": [
     {
-      "title": "Project One",
-      "summary": "Short description of what it is.",
+      "title": "UIT Rebranding - 2023",
+      "summary": "Modernize Ibn Tofail University’s brand and communication.",
       "images": [
-        "https://placehold.co/900x500?text=Project+One+1",
-        "https://placehold.co/900x500?text=Project+One+2"
+        "/images/uploads/uit.avif"
       ],
-      "description": "<p>The problem, your role, and the result go here.</p>\n\n<p>Add as many paragraphs as you like. <strong>HTML works.</strong></p>"
-    },
-    {
-      "title": "Project Two",
-      "summary": "Tools used, what you learned.",
-      "images": [
-        "https://placehold.co/900x500?text=Project+Two+1",
-        "https://placehold.co/900x500?text=Project+Two+2",
-        "https://placehold.co/900x500?text=Project+Two+3"
-      ],
-      "description": "<p>Explain the approach, the tools and what you would do differently.</p>"
-    },
-    {
-      "title": "Project Three",
-      "summary": "A one-line pitch goes here.",
-      "images": [
-        "https://placehold.co/900x500?text=Project+Three+1"
-      ],
-      "description": "<p>Write the full case study here.</p>"
+      "description": "Objective\nModernize Ibn Tofail University’s brand and communication.\n\nChallenge\n- Attract students and partners through a refreshed identity.\n- Strengthen the internal team’s digital marketing skills.\n- Prepare marketing students for the job market.\n\nSolutions\n\n01 — Rebranding\n- Analyzed brand perception through my Master’s thesis.\n- Developed a modern, cohesive brand strategy.\n\n02 — Team Training\n- Social media management.\n- Community engagement.\n- Digital marketing tools.\n\n03 — Student Workshops\n- Delivered hands-on workshops for Master’s students.\n- Focused on content marketing and digital strategies.\n\nResults\n- Stronger, more modern brand identity.\n- Empowered communication team.\n- Students equipped with practical, job-ready skills.\n\nImpact\nRevitalized the university’s brand and strengthened its people, laying the foundation for future growth."
     }
   ],
   "posts": [
