@@ -448,17 +448,54 @@
     function prettifyDate(raw) { if (!raw) return '—'; const d = new Date(raw); return Number.isNaN(d.getTime()) ? raw : new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', year: 'numeric' }).format(d); }
 
     function saveAlias() {
-      const alias = ALIAS_INPUT.value.trim() || 'guest';
+      if (!GATE || !ALIAS_INPUT) return;
+
+      const alias = (ALIAS_INPUT.value || '').trim() || 'guest';
       state.alias = alias;
-      sessionStorage.setItem('guestAlias', alias);
+
+      try {
+        sessionStorage.setItem('guestAlias', alias);
+      } catch (err) {
+        console.warn('sessionStorage unavailable:', err);
+      }
+
+      try {
+        localStorage.setItem('guestAlias', alias);
+      } catch (err) {
+        console.warn('localStorage unavailable:', err);
+      }
+
       GATE.classList.add('out');
-      setTimeout(() => { GATE.style.display = 'none'; }, 900);
+      setTimeout(() => {
+        if (GATE) {
+          GATE.style.display = 'none';
+          GATE.style.opacity = '0';
+          GATE.style.pointerEvents = 'none';
+        }
+      }, 700);
     }
 
-    BOOT_BTN.addEventListener('click', saveAlias);
-    ALIAS_INPUT.addEventListener('keydown', (event) => { if (event.key === 'Enter') saveAlias(); });
-    if (state.alias && state.alias !== 'guest') { GATE.classList.add('out'); GATE.style.display = 'none'; }
-    ALIAS_INPUT.value = state.alias && state.alias !== 'guest' ? state.alias : '';
+    if (BOOT_BTN) {
+      BOOT_BTN.addEventListener('click', saveAlias);
+    }
+
+    if (ALIAS_INPUT) {
+      ALIAS_INPUT.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') saveAlias();
+      });
+    }
+
+    if (state.alias && state.alias !== 'guest') {
+      if (ALIAS_INPUT) ALIAS_INPUT.value = state.alias;
+      if (GATE) {
+        GATE.classList.add('out');
+        setTimeout(() => {
+          if (GATE) GATE.style.display = 'none';
+        }, 700);
+      }
+    } else if (ALIAS_INPUT) {
+      ALIAS_INPUT.value = '';
+    }
 
     function iconSvg(type) {
       const svgMap = {
