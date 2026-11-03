@@ -1,370 +1,1063 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>zakaryae-os</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>zakaryae-os // portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#151515;--wall:#151515;--fg:#f5f5f5;--ac:#C6F22D;--ink:#151515;--pn:#1d1d1d;--tx:#f5f5f5;--ln:#f5f5f5}
-[data-theme=acid]{--wall:conic-gradient(from 20deg at 30% 40%,#ff3ea5,#ffe600,#00e5ff,#7c4dff,#ff3ea5);--fg:#fff;--ac:#ffe600;--ink:#1a0033;--pn:#2a0a4d;--tx:#fff;--ln:#ffe600}
-[data-theme=matrix]{--wall:#000;--fg:#33ff66;--ac:#00ff41;--ink:#000;--pn:#041a07;--tx:#33ff66;--ln:#00ff41}
-[data-theme=xp]{--wall:radial-gradient(ellipse 90% 60% at 30% 100%,#6cc23a 0 60%,transparent 61%),radial-gradient(ellipse 80% 50% at 90% 105%,#4fa52a 0 60%,transparent 61%),linear-gradient(#2f6fd6,#8dc3f5);--fg:#fff;--ac:#245edb;--ink:#fff;--pn:#ece9d8;--tx:#111;--ln:#0b3fa8}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;overflow:hidden;background:var(--wall) #000;color:var(--fg);font:14px/1.45 "Courier New",ui-monospace,monospace}
-button,input,textarea{font:inherit;color:inherit}
-button{background:var(--pn);color:var(--tx);border:2px solid var(--ln);padding:.3rem .7rem;cursor:pointer}
-button:hover,button:focus-visible{background:var(--ac);color:var(--ink);outline:none}
-input,textarea{background:var(--pn);color:var(--tx);border:2px solid var(--ln);padding:.35rem .5rem;min-width:0}
-#boot{position:fixed;inset:0;z-index:9999;background:#000;color:#C6F22D;display:grid;place-items:center;padding:1rem}
-#boot .box{border:2px solid #C6F22D;padding:1.5rem;max-width:30rem;width:100%;box-shadow:8px 8px 0 rgba(198,242,45,.25)}
-#boot h1{margin:0 0 .3rem;font-size:1.4rem}
-#boot p{margin:.2rem 0 1rem;color:#f5f5f5}
-#boot input{width:100%;margin-bottom:.8rem;background:#000;color:#C6F22D;border-color:#C6F22D}
-#boot button{background:#000;color:#C6F22D;border-color:#C6F22D}
-#boot button:hover,#boot button:focus-visible{background:#C6F22D;color:#000}
-#desk{position:absolute;inset:0 0 28px 0}
-#icons{position:absolute;inset:12px;display:grid;grid-auto-flow:column;grid-template-rows:repeat(auto-fill,92px);grid-auto-columns:96px;gap:4px;align-content:start;justify-content:start;pointer-events:none}
-.ico{width:92px;height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;cursor:default;user-select:none;touch-action:none;pointer-events:auto;font-size:12px;position:relative;word-break:break-all}
-.ico b{font-size:28px;line-height:1}
-.ico span{padding:0 3px}
-.ico:hover span,.ico:focus-visible span{background:var(--ac);color:var(--ink)}
-.ico.drag{z-index:50;opacity:.85}
-.win{position:absolute;background:var(--pn);color:var(--tx);border:2px solid var(--ln);box-shadow:6px 6px 0 rgba(0,0,0,.45);display:flex;flex-direction:column;max-width:100vw;max-height:calc(100% - 4px)}
-.tb{background:var(--ac);color:var(--ink);padding:.2rem .5rem;display:flex;justify-content:space-between;align-items:center;cursor:move;touch-action:none;user-select:none;font-weight:bold}
-.tb button{padding:0 .5rem;background:var(--ink);color:var(--ac);border:0}
-.wb{padding:.8rem;overflow:auto;flex:1;min-height:0}
-.txt{white-space:pre-wrap;margin:0;font:inherit}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.6rem}
-.card{border:2px solid var(--ln);padding:.5rem;cursor:pointer;background:transparent;text-align:left;color:var(--tx)}
-.card img,.gal img{width:100%;display:block;aspect-ratio:16/10;object-fit:cover;margin-bottom:.4rem}
-table{border-collapse:collapse;width:100%}td,th{border:1px solid var(--ln);padding:.3rem .5rem;text-align:left;vertical-align:top}
-.tag{font-weight:bold;white-space:nowrap}
-.row{display:flex;gap:.5rem;margin:.5rem 0;flex-wrap:wrap;align-items:center}
-.row input{flex:1}
-.mq{overflow:hidden;white-space:nowrap;border:2px solid var(--ln);padding:.3rem}
-.mq span{display:inline-block;padding-left:100%;animation:mq 12s linear infinite}
-@keyframes mq{to{transform:translateX(-100%)}}
-.note{border:1px dashed var(--ln);padding:.4rem;margin:.4rem 0}
-.note small{opacity:.75;display:block}
-#status{position:absolute;left:0;right:0;bottom:0;height:28px;background:var(--ac);color:var(--ink);padding:0 .6rem;line-height:28px;white-space:nowrap;overflow:hidden;z-index:9000;font-weight:bold}
-#wx{position:absolute;top:12px;right:12px;border:2px solid var(--ln);background:var(--pn);color:var(--tx);padding:.4rem .7rem;z-index:5;text-align:right}
-#relay{position:absolute;right:12px;bottom:40px;width:260px;border:2px solid var(--ln);background:var(--pn);color:var(--tx);padding:.5rem;z-index:5}
-#relay .row{margin:.3rem 0 0}
-canvas{background:#000;border:2px solid var(--ln);max-width:100%;touch-action:none}
-@media(max-width:699px){
-.win{inset:0 0 28px 0!important;width:auto!important;height:auto!important;max-height:none;box-shadow:none}
-#wx{top:6px;right:6px;font-size:12px}
-#relay{display:none}
+/* ===== TOKENS: Joyful Hippie Psychedelic ===== */
+:root{
+  --bg:#fbe9d0; --lime:#ff477e; --mag:#70d6ff; --purple:#ff9f1c; --deep:#ffd166;
+  /* extra theme tokens (the Themes.dir app overwrites all of these) */
+  --on:#fff; --baroff:#b8a99a; --tbbg:#dcd3c6; --card:#fff; --panel:#fefefe; --clockbg:#eaddcd;
+  --strip:#f4ebd8; --line:#ddd; --h2:#ff477e; --stuck:#ff9f1c; --idea:#1982c4;
+  --selbg:rgba(255,255,255,.4); --ish:1px 1px 0 #fff; --crt:rgba(0,0,0,.08); --vig:linear-gradient(transparent,transparent);
+  --deskbg:radial-gradient(circle at 0% 0%,#ff5e5b,#ffca3a,#8ac926,#1982c4,#6a4c93); --desksize:600% 600%; --deskanim:drift;
+  --edge:var(--lime); --sh:var(--mag); --rain:0; --raind:none;
+  --paper:#fffdf7; --ink:#2b1a1c; --body:#f4ebd8; --text:#2b1a1c; --tb:44px;
+  --font:'VT323','Courier New',monospace;
 }
-@media(prefers-reduced-motion:reduce){.mq span{animation:none;padding-left:0}}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+  font:22px/1.15 var(--font);-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px dashed var(--mag);outline-offset:2px}
+
+/* ===== DESKTOP BACKGROUND: Tie-dye fluid gradient ===== */
+#desktop{position:fixed;inset:0 0 var(--tb) 0;overflow:hidden;
+  background:var(--deskbg);background-size:var(--desksize);
+  animation:var(--deskanim) 20s ease-in-out infinite alternate}
+@keyframes drift{
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 50% 100%; }
+}
+
+/* Subtle CRT overlay */
+#crt{position:fixed;inset:0;pointer-events:none;z-index:99999;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0 2px,var(--crt) 3px),var(--vig)}
+
+/* ===== ICONS ===== */
+#icons{position:absolute;inset:12px auto auto 12px;display:grid;gap:8px;
+  grid-auto-flow:column;grid-template-rows:repeat(auto-fill,104px);height:calc(100% - 24px);grid-auto-columns:104px}
+.icon{width:104px;height:100px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 2px;text-align:center;
+  font-size:20px;word-break:break-all;border:1px dashed transparent; font-weight: bold; text-shadow:var(--ish);}
+.icon svg{width:44px;height:44px;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.15))}
+.icon.sel{border-color:var(--lime);background:var(--selbg)}
+.icon span{padding:0 3px}.icon.sel span{background:var(--lime);color:var(--on);text-shadow:none;}
+
+/* ===== WINDOWS ===== */
+.win{position:absolute;display:flex;flex-direction:column;background:var(--body);
+  border:2px solid var(--edge);box-shadow:6px 6px 0 var(--sh), 0 0 15px rgba(0,0,0,0.1);
+  min-width:260px;max-width:100vw}
+.win.min{display:none}
+.win.max{left:0!important;top:0!important;width:100%!important;height:100%!important;box-shadow:none}
+.bar{display:flex;align-items:center;gap:8px;background:var(--lime);color:var(--on);padding:3px 4px 3px 8px;
+  cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.win:not(.active) .bar{background:var(--baroff);color:var(--on)}
+.bar:active{cursor:grabbing}
+.bar .t{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:23px; letter-spacing:1px}
+.ctl{width:26px;height:24px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);line-height:1;font-size:20px;
+  display:grid;place-items:center}
+.ctl:hover{background:var(--mag)}
+.ctl.x:hover{background:#ff5e5b;color:#fff}
+.content{flex:1;overflow:auto;min-height:0}
+
+/* app: portfolio */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;padding:14px}
+.card{border:2px solid var(--text);background:var(--card);display:flex;flex-direction:column;box-shadow:3px 3px 0 var(--text)}
+.card:hover{border-color:var(--mag);box-shadow:4px 4px 0 var(--lime);transform:translateY(-2px);transition:transform 0.1s}
+.thumb{aspect-ratio:4/3;background-size:cover;background-position:center;border-bottom:2px solid var(--text)}
+.card b{display:block;padding:6px 8px 0;color:var(--lime);font-weight:bold;font-size:24px}
+.card p{padding:0 8px 8px;font-size:19px;opacity:.85}
+
+/* app: blog (text editor) */
+.menu{display:flex;gap:16px;padding:3px 10px;background:var(--strip);color:var(--ink);border-bottom:2px solid var(--ink)}
+.editor{display:flex;height:100%;min-height:0}
+.posts{width:34%;min-width:130px;background:var(--panel);border-right:2px solid var(--lime);overflow:auto}
+.posts button{display:block;width:100%;text-align:left;padding:8px 10px;border-bottom:1px dashed var(--line)}
+.posts button.on,.posts button:hover{background:var(--mag);color:var(--on)}
+.posts small{display:block;opacity:.8;font-size:17px}
+.doc{flex:1;background:var(--paper);color:var(--ink);padding:16px 18px;overflow:auto;font-size:23px;line-height:1.25}
+.doc h2{font-weight:bold;font-size:32px;margin-bottom:2px;color:var(--h2)}
+.doc em{display:block;font-style:normal;color:var(--purple);margin-bottom:12px}
+.doc p{margin-bottom:12px;max-width:62ch}
+.col{display:flex;flex-direction:column;height:100%}
+
+/* app: folder */
+.path{padding:4px 10px;background:var(--panel);border-bottom:2px solid var(--lime);color:var(--lime);font-weight:bold}
+.files{width:100%;border-collapse:collapse;background:var(--card)}
+.files th{position:sticky;top:0;background:var(--mag);color:var(--on);text-align:left;font-weight:bold;padding:4px 10px;border-bottom:2px solid var(--ink)}
+.files td{padding:6px 10px;border-bottom:1px dashed var(--line);white-space:nowrap}
+.files tr:hover td{background:rgba(112,214,255,.2)}
+.tag{border:1px solid currentColor;padding:0 6px;font-size:18px;background:var(--card)}
+.wip{color:var(--lime)}.stuck{color:var(--stuck)}.idea{color:var(--idea)}
+.status{padding:3px 10px;background:var(--strip);color:var(--ink);border-top:2px solid var(--ink);font-size:19px}
+
+/* ===== TASKBAR / START ===== */
+#taskbar{position:fixed;left:0;right:0;bottom:0;height:var(--tb);display:flex;align-items:center;gap:6px;padding:4px 6px;
+  background:var(--tbbg);border-top:2px solid var(--text);z-index:90000;box-shadow:0 -2px 10px rgba(0,0,0,0.1)}
+#start{display:flex;align-items:center;gap:8px;height:100%;padding:0 12px 0 8px;background:var(--lime);color:var(--on);
+  border:2px solid var(--ink);box-shadow:inset -2px -2px 0 rgba(0,0,0,.2),2px 2px 0 rgba(0,0,0,.1);font-size:24px;font-weight:bold}
+#start svg{width:20px;height:20px}
+#start[aria-expanded=true]{box-shadow:inset 2px 2px 0 rgba(0,0,0,.45)}
+#tasks{flex:1;display:flex;gap:6px;overflow-x:auto;height:100%;scrollbar-width:none}
+.task{min-width:90px;max-width:170px;padding:0 10px;height:100%;border:2px solid var(--ink);background:var(--body);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.task.active{border-color:var(--ink);background:var(--mag);color:var(--on);box-shadow:inset 2px 2px 0 rgba(0,0,0,.2)}
+#clock{padding:0 10px;color:var(--text);border:2px inset #aaa;height:100%;display:grid;place-items:center;background:var(--clockbg)}
+#menu{position:fixed;left:6px;bottom:calc(var(--tb) + 2px);width:260px;background:var(--body);border:2px solid var(--text);
+  box-shadow:6px 6px 0 var(--lime);z-index:90001;display:none}
+#menu.open{display:block}
+#menu .side{background:var(--mag);color:var(--on);padding:6px 10px;font-size:26px;letter-spacing:2px;font-weight:bold;border-bottom:2px solid var(--ink)}
+#menu button{display:block;width:100%;text-align:left;padding:8px 14px;font-size:22px}
+#menu button:hover{background:var(--lime);color:var(--on)}
+#menu hr{border:0;border-top:2px solid var(--text);margin:0}
+
+/* ===== MOBILE ===== */
+@media (max-width:700px){
+  :root{--tb:52px}
+  .win{left:0!important;top:0!important;width:100%!important;height:100%!important;box-shadow:none;border-width:0 0 2px}
+  .bar{cursor:default}.ctl.mx{display:none}
+  .editor{flex-direction:column}.posts{width:100%;height:34%;border-right:0;border-bottom:2px solid var(--lime)}
+  .ctl{width:36px;height:32px}
+  #tasks .task{min-width:70px}
+}
+@media (prefers-reduced-motion:reduce){#desktop{animation:none}}
+
+/* ===== WIDGETS (badge + weather) ===== */
+#widgets{position:absolute;top:12px;right:14px;width:250px;display:flex;flex-direction:column;gap:18px;z-index:5}
+.widget{background:var(--card);color:var(--text);border:2px solid var(--text);box-shadow:5px 5px 0 var(--mag)}
+.wbar{background:var(--lime);color:var(--on);padding:1px 8px;font-size:20px}
+.badge{transform:rotate(1.5deg)}
+.badge .slot{width:46px;height:9px;border:2px solid var(--text);border-radius:6px;margin:7px auto 2px;background:var(--bg)}
+.badge .row{display:flex;gap:10px;padding:8px 10px 10px}
+.pic{position:relative;flex:none;width:76px;height:76px;border:2px solid var(--text);
+  background:repeating-radial-gradient(circle at 30% 30%,var(--mag) 0 8px,var(--card) 9px 16px)}
+.pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.badge h3{font-size:32px;font-weight:700;line-height:1}
+.badge p{font-size:19px;line-height:1.05;margin-top:3px}
+.wx{display:flex;align-items:center;gap:10px;padding:8px 10px;min-height:76px}
+.wx svg{width:52px;height:52px;flex:none;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.wx .t{font-size:40px;line-height:1}.wx small{display:block;font-size:18px;line-height:1.05}
+
+/* ===== shared app bits ===== */
+button.card{text-align:left;color:var(--text);cursor:pointer}
+.btn{padding:5px 16px;border:2px solid var(--text);background:var(--lime);color:var(--on);box-shadow:3px 3px 0 var(--text)}
+.btn:active{box-shadow:none;transform:translate(3px,3px)}
+.field{width:100%;padding:8px;border:2px solid var(--text);background:var(--paper);color:var(--ink);font:inherit;margin:8px 0 12px}
+.pane{padding:16px}.pane h2{font-size:32px;font-weight:700;color:var(--lime)}.pane p{font-size:21px;max-width:50ch}
+.ok{margin-top:12px;padding:8px 10px;border:2px dashed var(--text);background:var(--card)}
+
+/* portfolio detail */
+.back{margin:12px 14px 0;padding:3px 12px;border:2px solid var(--text);background:var(--lime);color:var(--on);box-shadow:3px 3px 0 var(--text)}
+.detail{padding:6px 14px 16px}.detail h2{font-size:36px;font-weight:700;color:var(--lime)}
+.detail p{margin:10px 0;max-width:62ch;font-size:23px;line-height:1.2}
+.shot{display:block;width:100%;height:auto;border:2px solid var(--text);margin:0 0 14px;background:var(--card)}
+
+/* VMPC player: always a dark hardware look */
+.mpc{padding:12px;background:#232326;color:#e9e6dc;min-height:100%}
+.lcd{background:#b5c99a;color:#1d2a12;border:3px inset #6b7a58;padding:4px 8px;font-size:23px}
+.mq{overflow:hidden;white-space:nowrap}
+.mq span{display:inline-block;padding-left:100%;animation:marq 12s linear infinite}
+@keyframes marq{to{transform:translateX(-100%)}}
+.lcd .meta{display:flex;justify-content:space-between;font-size:19px;border-top:1px dashed #6b7a58;margin-top:3px}
+.pads{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.pad{height:62px;background:#3a3a40;border:2px solid #0e0e10;color:#fff;box-shadow:inset 0 -5px 0 rgba(0,0,0,.4)}
+.pad:active,.pad.on{background:var(--lime);color:var(--on)}
+.tl button{display:block;width:100%;text-align:left;padding:3px 6px;border-bottom:1px dashed #555}
+.tl button.on{background:#e9e6dc;color:#232326}
+
+/* terminal: always black + green */
+.term{min-height:100%;background:#000;color:#7CFF6B;padding:8px 10px;font-size:22px;line-height:1.1}
+.term pre{white-space:pre-wrap;word-break:break-word;font:inherit}
+.term .in{display:flex;gap:8px}
+.term input{flex:1;min-width:0;background:transparent;border:0;color:inherit;font:inherit;outline:none;caret-color:#7CFF6B}
+
+/* themes */
+.trow{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;text-align:left;border-bottom:1px dashed var(--line)}
+.trow:hover{background:var(--mag);color:var(--on)}
+.sw{display:flex;border:2px solid var(--text)}.sw i{width:16px;height:22px}
+.trow .cur{margin-left:auto}
+
+@media (max-width:700px){
+  #icons{grid-template-rows:repeat(auto-fill,96px);grid-auto-columns:84px}
+  .icon{width:84px;height:92px;font-size:17px}
+  #widgets{width:150px;gap:12px;right:8px}
+  .badge .intro,.wx small+small{display:none}.pic{width:52px;height:52px}.badge h3{font-size:26px}
+  .wx svg{width:36px;height:36px}.wx .t{font-size:30px}
+}
+@media (prefers-reduced-motion:reduce){.mq span{animation:none;padding-left:0}}
+
+/* ===== GATEKEEPER ===== */
+#gate{position:fixed;inset:0;z-index:99998;background:#050505;color:#fff;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:40px;transition:opacity .9s ease;text-align:center;padding:20px}
+#gate.out{opacity:0;pointer-events:none}
+#gate h1{font-weight:400;font-size:clamp(52px,11vw,120px);line-height:1;text-shadow:0 0 18px var(--lime);animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{50%{text-shadow:0 0 34px var(--mag),0 0 6px var(--lime)}}
+.gbtns{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
+.gbtn{font-size:34px;padding:6px 26px;border:2px solid var(--lime);color:var(--lime);background:transparent}
+.gbtn:hover,.gbtn:focus-visible{background:var(--lime);color:var(--on)}
+
+/* ===== MATRIX RAIN (shown only by the Matrix theme) ===== */
+#rain{position:absolute;inset:0;overflow:hidden;pointer-events:none;display:var(--raind);opacity:var(--rain)}
+#rain span{position:absolute;top:0;writing-mode:vertical-rl;text-orientation:upright;font-size:20px;line-height:1.05;
+  background:linear-gradient(to bottom,transparent,#00FF41);-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:fall linear infinite}
+@keyframes fall{from{transform:translateY(-110%)}to{transform:translateY(100vh)}}
+
+/* ===== QUOTE STICKER ===== */
+#sticker{position:absolute;right:26px;bottom:26px;width:210px;transform:rotate(-3deg);pointer-events:none;
+  filter:drop-shadow(4px 7px 5px rgba(0,0,0,.4))}
+#sticker .note{position:relative;background:#ffe97a;color:#2b2200;padding:22px 16px 30px;font-size:25px;line-height:1.05;
+  clip-path:polygon(0 0,100% 0,100% 94%,94% 97%,88% 93%,80% 98%,72% 94%,63% 99%,55% 95%,46% 98%,38% 94%,29% 99%,20% 95%,11% 98%,5% 94%,0 97%)}
+#sticker .note::before{content:"";position:absolute;top:0;left:50%;width:70px;height:16px;margin-left:-35px;background:rgba(255,255,255,.5)}
+#sticker cite{display:block;margin-top:8px;font-style:normal;font-size:19px;opacity:.7}
+#icons.free{inset:0;display:block;height:auto}
+#icons.free .icon{position:absolute}
+.icon{touch-action:none;user-select:none;-webkit-user-select:none}
+.icon.drag{opacity:.85;cursor:grabbing}
+@media (max-width:700px){#sticker{width:150px;right:10px;bottom:14px}#sticker .note{font-size:19px;padding:18px 10px 24px}}
+@media (prefers-reduced-motion:reduce){#gate h1{animation:none}#rain{display:none}}
+
+/* ===== stacking order: rain < sticker < icons < widgets < windows < taskbar < menu < gate < crt ===== */
+#rain{z-index:0}#sticker{z-index:1}#icons{z-index:2}
+/* ===== WALL ===== */
+.wf{padding:10px 12px;background:var(--strip);color:var(--ink);border-bottom:2px solid var(--ink)}
+.wf .field{margin:6px 0 8px;resize:none}.wf small{font-size:17px;opacity:.8}
+.wall{display:flex;flex-wrap:wrap;gap:18px;align-content:flex-start;padding:16px;background:#9b4a35 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='48'%3E%3Cpath d='M0 0h56M0 24h56M0 48h56M28 0v24M0 24v24M56 24v24' stroke='%23000' stroke-opacity='.3' stroke-width='2' fill='none'/%3E%3C/svg%3E")}
+.pi{width:158px;padding:10px 10px 8px;color:#2b2200;transform:rotate(var(--r));box-shadow:3px 5px 6px rgba(0,0,0,.45);font-size:22px;line-height:1.05;word-break:break-word}
+.pi p{margin-bottom:8px}.pi small{display:block;font-size:16px;opacity:.7;line-height:1}
+.wall .empty{color:#fff;font-size:24px}
+/* ===== SNAKE ===== */
+.snk{padding:10px;display:flex;flex-direction:column;align-items:center;gap:10px;background:#111;color:#e9e6dc;min-height:100%}
+.shud{display:flex;justify-content:space-between;width:100%;max-width:320px;font-size:24px}
+.sbox{position:relative;width:100%;max-width:320px}
+.sbox canvas{display:block;width:100%;height:auto;border:2px solid var(--lime);background:#0b0b0b;image-rendering:pixelated}
+.sov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(0,0,0,.78);text-align:center}
+.sov[hidden]{display:none}.sov h3{font-size:40px;font-weight:400;color:var(--lime)}
+.dpad{display:grid;grid-template:". u ." 52px "l d r" 52px / 64px 64px 64px;gap:6px}
+.dpad button{background:#3a3a40;border:2px solid #000;color:#fff;font-size:22px;touch-action:manipulation}
+.dpad [data-d=up]{grid-area:u}.dpad [data-d=left]{grid-area:l}.dpad [data-d=down]{grid-area:d}.dpad [data-d=right]{grid-area:r}
+.dpad button:active{background:var(--lime);color:var(--on)}
+.gname{font:inherit;font-size:32px;text-align:center;width:min(90vw,420px);padding:6px 12px;background:#000;color:var(--lime);border:2px solid var(--lime)}
+.tag.completed{color:#2e9e3a}.tag.wip{color:#c77700}.tag.segfault{color:#d11}
+#relay{position:absolute;right:14px;bottom:14px;width:270px;z-index:5}
+#relay form{padding:8px 10px}#relay .field{margin:4px 0 6px;padding:4px 8px}#relay .ok{margin-top:6px;padding:4px 8px}
+#showdesk{width:40px;height:100%;border:2px solid var(--ink);background:var(--body);font-size:20px}
+.rec{display:flex;gap:6px;margin:8px 0;align-items:center}.rec .field{margin:0}
+.lb{margin-top:8px;font-size:20px;min-width:200px}.lb div{display:flex;justify-content:space-between;border-bottom:1px dashed #777}
+@media(max-width:700px){#relay{display:none}}
 </style>
 </head>
 <body>
-<div id="boot">
-  <div class="box">
-    <h1>zakaryae-os v1.0</h1>
-    <p>Who is at the keyboard?</p>
-    <input id="bootName" type="text" maxlength="24" placeholder="Your name" autocomplete="off">
-    <div class="row"><button id="bootEnter" type="button">[ Enter ]</button><button id="bootSkip" type="button">[ Skip ]</button></div>
-  </div>
+
+<div id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-q">
+  <h1 id="gate-q">Who is there?</h1>
+  <input id="gate-name" class="gname" type="text" maxlength="24" placeholder="your name" autocomplete="off" aria-label="Your name">
+  <div class="gbtns"><button class="gbtn" id="g-enter" type="button">[ Enter ]</button><button class="gbtn" id="g-skip" type="button">[ Skip ]</button></div>
 </div>
-<div id="desk"><div id="icons"></div></div>
-<div id="wx">weather: loading…</div>
-<form id="relay" onsubmit="return false">
-  <b>Broadcast_Relay</b>
-  <div class="row"><input id="relayMail" type="email" placeholder="you@email.com" aria-label="Email"><button id="relayBtn" type="button">Subscribe</button></div>
-  <div id="relayMsg"></div>
-</form>
-<div id="status">ready.</div>
+<div id="desktop" inert><div id="rain" aria-hidden="true"></div>
+  <nav id="icons" aria-label="Desktop"></nav>
+  <!-- Quote sticker: edit the text below -->
+  <aside id="sticker" aria-label="Quote"><div class="note"><p>The map is not the territory.</p><cite>Alfred Korzybski</cite></div></aside>
+  <aside id="widgets" aria-label="Widgets">
+    <!-- Profile badge: swap profile-placeholder.jpg for your photo -->
+    <section class="widget badge" aria-label="Profile">
+      <div class="slot"></div>
+      <div class="row">
+        <div class="pic"><img src="profile-placeholder.jpg" alt="Zakaryae" onerror="this.remove()"></div>
+        <div><h3>Zakaryae</h3><p class="intro">Software Engineering Student @ 1337 | Former Creative Director</p></div>
+      </div>
+    </section>
+    <section class="widget" aria-label="Weather">
+      <div class="wbar">WEATHER.sys</div>
+      <div class="wx" id="wx" aria-live="polite">Locating...</div>
+    </section>
+  </aside>
+  <aside id="relay" class="widget" aria-label="Broadcast_Relay">
+    <div class="wbar">Broadcast_Relay</div>
+    <form novalidate><input class="field" type="email" required autocomplete="email" placeholder="you@example.com" aria-label="Email address"><button class="btn" type="submit">Subscribe</button><div class="ok" role="status" hidden></div></form>
+  </aside></div>
+<div id="crt" aria-hidden="true"></div>
+
+<div id="menu" role="menu"></div>
+<div id="taskbar" inert>
+  <button id="start" aria-haspopup="true" aria-expanded="false">
+    <!-- Geometric 'Z' Logo -->
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <path fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square" d="M6 8h20L6 24h20"/>
+    </svg>
+    <span>Start</span>
+  </button>
+  <div id="tasks" aria-label="Open windows"></div>
+  <button id="showdesk" type="button" title="Show Desktop" aria-label="Show Desktop">[_]</button>
+  <div id="clock">--:--</div>
+</div>
 
 <script>
-(function () {
-  'use strict';
-  var $ = function (s, r) { return (r || document).querySelector(s); };
-  var esc = function (s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; };
-  var store = {
-    get: function (k, d) { try { var v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-  };
-  var user = 'Guest', DATA = null, booted = false;
-  var FALLBACK = { siteSettings: { github: 'https://github.com/zgourrag', linkedin: 'https://www.linkedin.com/in/zakaryae', instagram: 'https://www.instagram.com/zakaryve/', weatherCity: 'Rabat, Morocco' }, work: [], posts: [], wip: [] };
+const LINKS = {
+  github:   'https://github.com/zgourrag',
+  linkedin: 'https://www.linkedin.com/in/zakaryae-gourragui/',
+  instagram:'https://www.instagram.com/zakaryve/'
+};
 
-  /* ---------- BOOT (bound once, null-safe) ---------- */
-  function finishBoot(name) {
+// Content lives in data.json (edited through /master). Loaded once; apps read these on open.
+let WORK = [], POSTS = [], WIP = [];
+const dataReady = fetch('data.json', {cache:'no-cache'})
+  .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  .then(d => {
+    WORK = d.work || [];
+    POSTS = (d.posts || []).slice().sort((a,b) => String(b.date).localeCompare(String(a.date)));   // newest first
+    WIP = d.wip || [];
+  })
+  .catch(err => console.warn('data.json could not be loaded (opening index.html from file:// does this):', err));
+
+
+
+const S = 'viewBox="0 0 44 44" fill="none" stroke-width="2.500"';
+const ICO = {
+  exe:`<svg ${S} style="stroke:var(--lime)"><rect x="4" y="7" width="36" height="30" style="fill:var(--card)"/><rect x="4" y="7" width="36" height="7" style="fill:var(--lime)"/><path d="M12 22l5 4-5 4M21 31h9"/></svg>`,
+  txt:`<svg ${S} style="stroke:var(--mag)"><path d="M9 4h19l7 7v29H9z" style="fill:var(--card)"/><path d="M15 18h14M15 24h14M15 30h9" style="stroke:var(--purple)"/></svg>`,
+  dir:`<svg ${S} style="stroke:var(--purple)"><path d="M4 12h14l3 4h19v22H4z" style="fill:var(--card)"/><path d="M4 20h36" style="stroke:var(--lime)"/></svg>`,
+  lnk:`<svg ${S} style="stroke:var(--mag)"><rect x="6" y="6" width="32" height="32" style="fill:var(--card)"/><path d="M16 28L30 14M20 14h10v10" style="stroke:var(--lime)"/></svg>`,
+  vmpc:`<svg ${S} style="stroke:var(--text)"><rect x="4" y="6" width="36" height="32" style="fill:#232326"/><rect x="9" y="11" width="10" height="9" style="fill:var(--lime)"/><rect x="25" y="11" width="10" height="9" style="fill:var(--mag)"/><rect x="9" y="25" width="10" height="9" style="fill:var(--mag)"/><rect x="25" y="25" width="10" height="9" style="fill:var(--lime)"/></svg>`,
+  news:`<svg ${S} style="stroke:var(--text)"><rect x="5" y="10" width="34" height="24" style="fill:var(--card)"/><path d="M5 12l17 13 17-13" style="stroke:var(--mag)"/></svg>`,
+  term:`<svg ${S} stroke="#7CFF6B"><rect x="4" y="7" width="36" height="30" fill="#000"/><path d="M11 17l6 5-6 5M21 28h10"/></svg>`,
+  wall:`<svg ${S} style="stroke:var(--text)"><rect x="4" y="6" width="36" height="32" style="fill:#9b4a35"/><rect x="11" y="12" width="14" height="14" style="fill:#ffe97a"/><rect x="24" y="22" width="12" height="11" style="fill:#ffb3c7"/></svg>`,
+  snake:`<svg ${S} style="stroke:var(--lime)"><rect x="4" y="6" width="36" height="32" style="fill:var(--card)"/><path d="M18 14l12 8-12 8z" style="fill:var(--lime)"/></svg>`
+};
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// Text helpers: CMS text uses blank lines between paragraphs; a paragraph that starts with "<" is kept as raw HTML
+const paras = b => Array.isArray(b) ? b : String(b || '').split(/\n{2,}/).map(t => t.trim()).filter(Boolean);
+const rich  = t => paras(t).map(x => x.startsWith('<') ? x : `<p>${esc(x)}</p>`).join('');
+
+const tagOf = st => { const x = String(st || '').toLowerCase(); return x.includes('segfault') ? {c:'segfault', t:'[SEGFAULT]'} : (x.includes('progress') || x === 'wip') ? {c:'wip', t:'[WIP]'} : {c:'completed', t:'[COMPLETED]'}; };
+const lbRows = b => [['ptr_master',42],['malloc_mo',31],['segfault_sam',18],[window.SESSION || 'Guest', b]].sort((x,y) => y[1] - x[1]).map((r,i) => `<div><span>${i+1}. ${esc(r[0])}</span><span>${r[1]}</span></div>`).join('');
+const CV = `ZAKARYAE
+Creative technologist -> software engineer
+
+[BEFORE] CREATIVE DIRECTION
+Digital marketing, brand identity and campaigns. I shaped the facade of products, from the first idea to the last pixel.
+
+[NOW] 1337, MOROCCO
+Studying software engineering. C, pointers, memory management and data structures. Rebuilding libft from scratch and learning how code meets hardware.
+
+[PRINCIPLE]
+Strip the abstraction. Understand allocation, ownership and failure modes first.`;
+const APPS = {
+  portfolio:{ title:'Portfolio.exe', icon:'exe', w:620, h:440, html:() => '<div class="pf"></div>',
+    init(win){
+      const pf = win.querySelector('.pf'), box = win.querySelector('.content');
+      const thumb = (p,i) => p.images && p.images[0] ? `url('${esc(p.images[0])}')` :
+        `repeating-radial-gradient(circle at 30% 30%,hsl(${(280 + i*47) % 360} 80% 60%) 0 10px,var(--card) 11px 20px)`;
+
+      // Grid view: one clickable card per project
+      const grid = () => {
+        pf.innerHTML = WORK.length ? `<div class="grid">${WORK.map((p,i) => `
+          <button class="card" data-i="${i}">
+            <div class="thumb" style="background-image:${thumb(p,i)}"></div>
+            <b>${esc(p.title)}</b><p>${esc(p.summary)}</p>
+          </button>`).join('')}</div>` : '<div class="pane"><p>No projects yet. Add some in /master, or check that data.json loads.</p></div>';
+        pf.querySelectorAll('.card').forEach(c => c.addEventListener('click', () => detail(+c.dataset.i)));
+        box.scrollTop = 0;
+      };
+
+      // Detailed view: title, full description, images in order
+      const detail = i => {
+        const p = WORK[i];
+        pf.innerHTML = `<button class="back">&lt;- Back to Grid</button>
+          <article class="detail"><h2>${esc(p.title)}</h2>${rich(p.description)}
+          ${(p.images||[]).map((u,n) => `<img class="shot" loading="lazy" src="${esc(u)}" alt="${esc(p.title)} photo ${n+1}">`).join('')}</article>`;
+        pf.querySelector('.back').addEventListener('click', grid);
+        box.scrollTop = 0;
+      };
+      grid();
+    } },
+
+  blog:{ title:'Blog.txt - Editor', icon:'txt', w:700, h:440, html:() =>
+    `<div class="col"><div class="menu"><span>File</span><span>Edit</span><span>Search</span><span>Help</span></div>
+     <div class="editor"><div class="posts">${POSTS.map((p,i) =>
+       `<button data-i="${i}" class="${i?'':'on'}">${esc(p.title)}<small>${esc(p.date)}</small></button>`).join('')}</div>
+     <article class="doc"></article></div></div>`,
+    init(win){
+      const doc = win.querySelector('.doc'), btns = win.querySelectorAll('.posts button');
+      const show = i => {
+        const p = POSTS[i];
+        doc.innerHTML = `<h2>${esc(p.title)}</h2><em>${esc(p.date)}</em>` + paras(p.body).map(t => `<p>${esc(t)}</p>`).join('');
+        doc.scrollTop = 0;
+        btns.forEach((b,j) => b.classList.toggle('on', i === j));
+      };
+      btns.forEach(b => b.addEventListener('click', () => show(+b.dataset.i)));
+      if (POSTS.length) show(0); else doc.innerHTML = '<p>No posts yet.</p>';
+    } },
+
+  wip:{ title:'C:\\Unfinished_Projects', icon:'dir', w:640, h:380, html:() =>
+    `<div class="col"><div class="path">C:\\Unfinished_Projects\\</div>
+     <div class="content"><table class="files"><thead><tr><th>Name</th><th>Type</th><th>Status</th><th>Note</th><th>Modified</th></tr></thead><tbody>
+     ${WIP.map(f => `<tr><td>${esc(f.file)}</td><td>${esc(f.type)}</td>
+       <td><span class="tag ${tagOf(f.status).c}">${tagOf(f.status).t}</span></td><td>${esc(f.note)}</td><td>${esc(f.date)}</td></tr>`).join('')}
+     </tbody></table></div><div class="status">${WIP.length} object(s)</div></div>` }
+};
+
+const ICONS = [
+  {label:'zakaryae.txt',            icon:'txt',  app:'about'},
+  {label:'Portfolio.exe',           icon:'exe',  app:'portfolio'},
+  {label:'Blog.txt',                icon:'txt',  app:'blog'},
+  {label:'Projects.dir'          , icon:'dir',  app:'wip'},
+  {label:'VMPC.exe',                icon:'vmpc', app:'vmpc'},
+  {label:'Terminal.exe',            icon:'term', app:'term'},
+  {label:'Newsletter.exe',          icon:'news', app:'news'},
+  {label:'Wall.exe',                icon:'wall', app:'wall'},
+  {label:'Snake.exe',               icon:'snake',app:'snake'},
+  {label:'Themes.dir',              icon:'dir',  app:'themes'},
+  {label:'Links.dir',               icon:'dir',  app:'links'}
+];
+
+const desktop = document.getElementById('desktop');
+const tasksEl = document.getElementById('tasks');
+const wins = {};
+let zTop = 10, openCount = 0;
+const isMobile = () => matchMedia('(max-width:700px)').matches;
+
+function openApp(id){
+  if (wins[id]) { restore(id); return; }
+  const app = APPS[id];
+  const el = document.createElement('section');
+  el.className = 'win';
+  el.setAttribute('role','dialog');
+  el.setAttribute('aria-label', app.title);
+  el.innerHTML = `
+    <header class="bar"><span class="t">${esc(app.title)}</span>
+      <button class="ctl mn" aria-label="Minimize">_</button>
+      <button class="ctl mx" aria-label="Maximize">&#9633;</button>
+      <button class="ctl x"  aria-label="Close">&times;</button></header>
+    <div class="content">${app.html()}</div>`;
+
+  const w = Math.min(app.w, innerWidth - 20), h = Math.min(app.h, desktop.clientHeight - 20);
+  const off = (openCount++ % 6) * 28;
+  el.style.width = w + 'px'; el.style.height = h + 'px';
+  el.style.left = Math.max(0, Math.min(150 + off, innerWidth - w)) + 'px';
+  el.style.top  = Math.max(0, Math.min(30 + off, desktop.clientHeight - h)) + 'px';
+  desktop.appendChild(el);
+
+  const btn = document.createElement('button');
+  btn.className = 'task'; btn.textContent = app.title;
+  btn.addEventListener('click', () => {
+    if (el.classList.contains('min')) restore(id);
+    else if (el.classList.contains('active')) minimize(id);
+    else focusWin(id);
+  });
+  tasksEl.appendChild(btn);
+  wins[id] = {el, btn};
+
+  el.addEventListener('pointerdown', () => focusWin(id));
+  el.querySelector('.mn').addEventListener('click', () => minimize(id));
+  el.querySelector('.mx').addEventListener('click', () => el.classList.toggle('max'));
+  el.querySelector('.x').addEventListener('click', () => closeWin(id));
+  const bar = el.querySelector('.bar');
+  bar.addEventListener('dblclick', e => { if (!e.target.closest('.ctl') && !isMobile()) el.classList.toggle('max'); });
+  makeDraggable(el, bar);
+  if (app.init) app.init(el);
+  focusWin(id);
+}
+
+// Keep window z-indexes far below the taskbar (90000) even after thousands of clicks
+function restack(){
+  const list = Object.values(wins).sort((a,b) => a.el.style.zIndex - b.el.style.zIndex);
+  list.forEach((o,i) => o.el.style.zIndex = 11 + i); zTop = 11 + list.length;
+}
+function focusWin(id){
+  const w = wins[id]; if (!w) return;
+  Object.values(wins).forEach(o => { o.el.classList.remove('active'); o.btn.classList.remove('active'); });
+  w.el.classList.remove('min');
+  if (zTop > 80000) restack();
+  w.el.style.zIndex = ++zTop;
+  w.el.classList.add('active'); w.btn.classList.add('active');
+}
+function restore(id){ focusWin(id); }
+function minimize(id){
+  const w = wins[id];
+  w.el.classList.add('min'); w.el.classList.remove('active'); w.btn.classList.remove('active');
+  const vis = Object.keys(wins).filter(k => !wins[k].el.classList.contains('min'))
+    .sort((a,b) => wins[b].el.style.zIndex - wins[a].el.style.zIndex);
+  if (vis.length) focusWin(vis[0]);
+}
+function closeWin(id){
+  const w = wins[id]; if (!w) return;
+  if (APPS[id].onClose) APPS[id].onClose();   // let apps clean up (e.g. stop audio)
+  w.el.remove(); w.btn.remove(); delete wins[id];
+  const vis = Object.keys(wins).filter(k => !wins[k].el.classList.contains('min'))
+    .sort((a,b) => wins[b].el.style.zIndex - wins[a].el.style.zIndex);
+  if (vis.length) focusWin(vis[0]);
+}
+
+function makeDraggable(win, handle){
+  handle.addEventListener('pointerdown', e => {
+    if (e.target.closest('.ctl') || isMobile() || win.classList.contains('max') || e.button > 0) return;
+    const r = win.getBoundingClientRect();
+    const dx = e.clientX - r.left, dy = e.clientY - r.top;
+    handle.setPointerCapture(e.pointerId);
+
+    const move = ev => {
+      const x = Math.min(Math.max(ev.clientX - dx, 80 - r.width), innerWidth - 80);
+      const y = Math.min(Math.max(ev.clientY - dy, 0), desktop.clientHeight - 30);
+      win.style.left = x + 'px'; win.style.top = y + 'px';
+    };
+    const up = () => {
+      handle.removeEventListener('pointermove', move);
+      handle.removeEventListener('pointerup', up);
+      handle.removeEventListener('pointercancel', up);
+    };
+    handle.addEventListener('pointermove', move);
+    handle.addEventListener('pointerup', up);
+    handle.addEventListener('pointercancel', up);
+  });
+}
+
+const iconsEl = document.getElementById('icons');
+/* ---- Draggable desktop icons ----
+   Icons start in a column-wrapping grid. The first drag freezes every icon at its
+   current spot (absolute positions) so nothing jumps, then icons move freely. */
+let iconsFree = false;
+function freezeIcons(){
+  if (iconsFree) return;
+  const d = desktop.getBoundingClientRect(), kids = [...iconsEl.children];
+  const pos = kids.map(el => { const r = el.getBoundingClientRect(); return [r.left - d.left, r.top - d.top]; });
+  iconsEl.classList.add('free');
+  kids.forEach((el, i) => { el.style.left = pos[i][0] + 'px'; el.style.top = pos[i][1] + 'px'; });
+  iconsFree = true;
+}
+function makeIconDraggable(el){
+  el.addEventListener('pointerdown', e => {
+    if (e.button > 0) return;
+    const sx = e.clientX, sy = e.clientY;
+    let started = false, ox = 0, oy = 0;
+    const move = ev => {
+      if (!started) {
+        if (Math.hypot(ev.clientX - sx, ev.clientY - sy) < 6) return;   // small wiggle = still a click
+        started = true; freezeIcons();
+        const r = el.getBoundingClientRect(); ox = sx - r.left; oy = sy - r.top;
+        el.style.zIndex = 6; el.classList.add('drag');
+      }
+      const d = desktop.getBoundingClientRect();
+      el.style.left = Math.min(Math.max(ev.clientX - d.left - ox, 0), desktop.clientWidth  - el.offsetWidth)  + 'px';
+      el.style.top  = Math.min(Math.max(ev.clientY - d.top  - oy, 0), desktop.clientHeight - el.offsetHeight) + 'px';
+    };
+    const up = () => {
+      removeEventListener('pointermove', move); removeEventListener('pointerup', up); removeEventListener('pointercancel', up);
+      if (!started) return;
+      el.classList.remove('drag'); el.style.zIndex = '';
+      el._dragged = true; setTimeout(() => el._dragged = false, 50);     // swallow the click that follows a drag
+    };
+    addEventListener('pointermove', move); addEventListener('pointerup', up); addEventListener('pointercancel', up);
+  });
+}
+addEventListener('resize', () => {            // keep dragged icons on screen
+  if (!iconsFree) return;
+  [...iconsEl.children].forEach(el => {
+    el.style.left = Math.min(parseFloat(el.style.left), Math.max(0, desktop.clientWidth  - el.offsetWidth))  + 'px';
+    el.style.top  = Math.min(parseFloat(el.style.top),  Math.max(0, desktop.clientHeight - el.offsetHeight)) + 'px';
+  });
+});
+const activate = it => it.app ? openApp(it.app) : window.open(it.href, '_blank', 'noopener');
+
+ICONS.forEach(it => {
+  const b = document.createElement('button');
+  b.className = 'icon';
+  b.innerHTML = ICO[it.icon] + `<span>${esc(it.label)}</span>`;
+  makeIconDraggable(b);
+  // Second click opens (first click selects); single tap opens on mobile
+  b.addEventListener('click', e => {
+    e.stopPropagation();
+    if (b._dragged) return;               // a drag is not a click
+    const wasSelected = b.classList.contains('sel');
+    iconsEl.querySelectorAll('.sel').forEach(n => n.classList.remove('sel'));
+    b.classList.add('sel');
+    if (wasSelected || isMobile()) activate(it);
+  });
+  b.addEventListener('keydown', e => { if (e.key === 'Enter') activate(it); });
+  iconsEl.appendChild(b);
+});
+desktop.addEventListener('click', () => iconsEl.querySelectorAll('.sel').forEach(n => n.classList.remove('sel')));
+
+const menu = document.getElementById('menu'), startBtn = document.getElementById('start');
+menu.innerHTML = '<div class="side">ZAKARYAE</div>' +
+  ICONS.map((it,i) => `<button role="menuitem" data-i="${i}">${esc(it.label)}</button>`).join('') +
+  '<hr><button role="menuitem" data-off="1">Shut down...</button>';
+const setMenu = open => { menu.classList.toggle('open', open); startBtn.setAttribute('aria-expanded', open); };
+startBtn.addEventListener('click', e => { e.stopPropagation(); setMenu(!menu.classList.contains('open')); });
+menu.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.off) Object.keys(wins).forEach(closeWin); else activate(ICONS[+b.dataset.i]);
+  setMenu(false);
+});
+document.addEventListener('click', e => { if (!e.target.closest('#menu')) setMenu(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+
+const clock = document.getElementById('clock');
+const tick = () => clock.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+tick(); setInterval(tick, 20000);
+
+/* =========================================================
+   VMPC.exe: music player
+   ========================================================= */
+const TRACKS = [
+  // TEMP test streams (SoundHelix demo songs). Swap each url for your own file, e.g. 'audio/feather.mp3'.
+  {title:'Aruarian Dance', url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'},
+  {title:'Feather',        url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'},
+  {title:'Luv(sic) pt3',   url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'}
+];
+const audio = new Audio();          // lives outside the window so music survives minimize
+audio.preload = 'none';
+let trackIdx = 0;
+const fmt = t => isFinite(t) ? Math.floor(t/60) + ':' + String(Math.floor(t%60)).padStart(2,'0') : '0:00';
+audio.src = TRACKS[0].url;
+
+Object.assign(APPS, {
+  vmpc:{ title:'VMPC.exe', icon:'vmpc', w:380, h:450,
+    html:() => `<div class="mpc">
+      <div class="lcd"><div class="mq"><span></span></div>
+        <div class="meta"><span class="no"></span><span class="tm">0:00 / 0:00</span></div></div>
+      <div class="pads"><button class="pad" data-a="play">PLAY</button><button class="pad" data-a="pause">PAUSE</button><button class="pad" data-a="next">NEXT</button></div>
+      <form class="rec"><input class="field" maxlength="80" placeholder="Recommend a track..." aria-label="Recommend a track"><button class="btn" type="submit">Send</button></form>
+      <div class="tl">${TRACKS.map((t,i) => `<button data-i="${i}">${String(i+1).padStart(2,'0')} ${esc(t.title)}</button>`).join('')}</div>
+    </div>`,
+    init(win){
+      const $ = q => win.querySelector(q), padPlay = $('[data-a=play]');
+      const note = msg => { $('.mq span').textContent = msg; };
+      const draw = () => {
+        note(`Now Playing: Nujabes - ${TRACKS[trackIdx].title}`);
+        $('.no').textContent = `TRK ${trackIdx+1}/${TRACKS.length}`;
+        win.querySelectorAll('.tl button').forEach((b,i) => b.classList.toggle('on', i === trackIdx));
+        padPlay.classList.toggle('on', !audio.paused);
+      };
+      // play() must run inside a click (browser autoplay policy) and returns a promise that can reject
+      const play = async () => {
+        try { await audio.play(); }
+        catch (err) {
+          if (err.name === 'AbortError') return;                       // a newer load() interrupted this one
+          note(err.name === 'NotAllowedError' ? 'Browser blocked playback. Press PLAY again.'
+                                              : 'Cannot play this track. Check its URL in TRACKS.');
+        }
+        draw();
+      };
+      const load = i => { trackIdx = (i + TRACKS.length) % TRACKS.length; audio.src = TRACKS[trackIdx].url; draw(); };
+      audio.ontimeupdate = () => $('.tm').textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+      audio.onended = () => { load(trackIdx + 1); play(); };       // auto-advance
+      audio.onerror = () => note('Cannot load this track. Check its URL in TRACKS.');
+      audio.onplay = audio.onpause = draw;
+      padPlay.addEventListener('click', play);
+      $('[data-a=pause]').addEventListener('click', () => { audio.pause(); draw(); });
+      $('[data-a=next]').addEventListener('click', () => { load(trackIdx + 1); play(); });
+      win.querySelectorAll('.tl button').forEach(b => b.addEventListener('click', () => { load(+b.dataset.i); play(); }));
+      const rf = $('.rec');
+      if (rf) rf.addEventListener('submit', e => {
+        e.preventDefault(); const i = rf.querySelector('input'), v = i.value.trim(); if (!v) return;
+        try { const r = JSON.parse(localStorage.getItem('zk-recs') || '[]'); r.push({t:v, by:window.SESSION || 'Guest'}); localStorage.setItem('zk-recs', JSON.stringify(r)); } catch(x) {}
+        i.value = ''; note('Thanks ' + (window.SESSION || 'Guest') + '! Recommendation received.'); setTimeout(draw, 2500);
+      });
+      draw();
+    },
+    onClose(){ audio.pause(); audio.ontimeupdate = audio.onended = audio.onerror = audio.onplay = audio.onpause = null; } },
+
+/* =========================================================
+   Newsletter.exe (no backend yet: front-end only)
+   ========================================================= */
+  news:{ title:'Newsletter.exe', icon:'news', w:420, h:300,
+    html:() => `<form class="pane" novalidate>
+      <h2>Subscribe</h2><p>Occasional notes on C, low-level mechanics and building things.</p>
+      <label for="nl-email">Email address</label>
+      <input id="nl-email" class="field" type="email" required autocomplete="email" placeholder="you@example.com">
+      <button class="btn" type="submit">Subscribe</button>
+      <div class="ok" role="status" hidden></div></form>`,
+    init(win){
+      const form = win.querySelector('form'), input = win.querySelector('input'), ok = win.querySelector('.ok');
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        if (!input.checkValidity()) { ok.hidden = false; ok.textContent = 'Please enter a valid email address.'; return; }
+        // TODO: send input.value to your backend or form service here
+        input.value = '';
+        ok.hidden = false;
+        ok.textContent = 'Thanks for subscribing! Added to the database.';
+      });
+    } },
+
+/* =========================================================
+   Terminal.exe
+   ========================================================= */
+  term:{ title:'Terminal.exe', icon:'term', w:600, h:380,
+    html:() => `<div class="term"><pre class="out"></pre>
+      <label class="in"><span class="ps">zakaryae@1337:~$</span><input spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Terminal input"></label></div>`,
+    init(win){
+      const out = win.querySelector('.out'), input = win.querySelector('input'), box = win.querySelector('.content');
+      const PS = 'zakaryae@1337:~$ ';
+      const hist = []; let h = 0;
+      const print = t => { out.textContent += t + '\n'; box.scrollTop = box.scrollHeight; };
+      const COMMANDS = {
+        help:   () => 'Available commands:\n  help          list commands\n  whoami        short bio\n  ls            list files\n  cat <file>    print a file (try: cat resume.txt)\n  clear         clear the screen',
+        whoami: () => 'Zakaryae. Software engineering student at 1337 (Morocco), former creative director.\nTrading brand strategy for low-level C and first-principles problem solving.',
+        ls:     () => 'projects/  resume.txt',
+        cat:    a => !a[0] ? 'usage: cat <file>' : a[0] === 'resume.txt' ? RESUME : `cat: ${a[0]}: ${a[0] === 'projects' ? 'Is a directory' : 'No such file or directory'}`
+      };
+      const RESUME = [
+        '============================================',
+        '  ZAKARYAE // RESUME',
+        '============================================',
+        '  Role     Software Engineering Student @ 1337',
+        '  Before   Creative Director (marketing, brand)',
+        '  Focus    C, Unix, low-level programming',
+        '--------------------------------------------',
+        '  EDUCATION',
+        '   > 1337 Coding School, Morocco (Common Core)',
+        '  PROJECTS',
+        '   > libft: the C standard library, rebuilt',
+        '  EXPERIENCE',
+        '   > Creative Director  [edit me in the JS]',
+        '  CONTACT',
+        '   > ' + LINKS.github.replace('https://', ''),
+        '============================================'
+      ].join('\n');
+      print('Welcome to zakaryae-os. Type "help" to begin.');
+
+      input.addEventListener('keydown', e => {
+        if (e.key === 'ArrowUp' && hist.length)  { h = Math.max(0, h - 1); input.value = hist[h]; e.preventDefault(); }
+        if (e.key === 'ArrowDown' && hist.length) { h = Math.min(hist.length, h + 1); input.value = hist[h] || ''; e.preventDefault(); }
+        if (e.key !== 'Enter') return;
+        const line = input.value.trim(); input.value = '';
+        print(PS + line);
+        if (!line) return;
+        hist.push(line); h = hist.length;
+        const [cmd, ...args] = line.split(/\s+/);
+        if (cmd === 'clear') { out.textContent = ''; return; }
+        print(COMMANDS[cmd] ? COMMANDS[cmd](args) : `${cmd}: command not found. Type "help".`);
+      });
+      win.querySelector('.term').addEventListener('click', () => { if (!getSelection().toString()) input.focus(); });
+      if (!isMobile()) input.focus();
+    } }
+});
+
+/* =========================================================
+   Themes.dir: overwrite :root variables at runtime
+   ========================================================= */
+const THEMES = {
+  Joyful_Hippie:{ note:'Tie-dye gradient, warm colours', vars:{
+    '--bg':'#fbe9d0','--lime':'#ff477e','--mag':'#70d6ff','--purple':'#ff9f1c','--deep':'#ffd166',
+    '--paper':'#fffdf7','--ink':'#2b1a1c','--body':'#f4ebd8','--text':'#2b1a1c',
+    '--on':'#fff','--baroff':'#b8a99a','--tbbg':'#dcd3c6','--card':'#fff','--panel':'#fefefe','--clockbg':'#eaddcd',
+    '--strip':'#f4ebd8','--line':'#ddd','--h2':'#ff477e','--stuck':'#ff9f1c','--idea':'#1982c4',
+    '--selbg':'rgba(255,255,255,.4)','--ish':'1px 1px 0 #fff','--crt':'rgba(0,0,0,.08)','--vig':'linear-gradient(transparent,transparent)',
+    '--deskbg':'radial-gradient(circle at 0% 0%,#ff5e5b,#ffca3a,#8ac926,#1982c4,#6a4c93)','--desksize':'600% 600%','--deskanim':'drift' }},
+  Dark_NeoNoir:{ note:'Pitch black, acid lime, magenta', vars:{
+    '--bg':'#151515','--lime':'#C6F22D','--mag':'#FF2BD6','--purple':'#3b0a63','--deep':'#1a0630',
+    '--paper':'#F4F2E9','--ink':'#151515','--body':'#1b1b1b','--text':'#F4F2E9',
+    '--on':'#151515','--baroff':'#6d8a14','--tbbg':'#0c0c0c','--card':'#111','--panel':'#111','--clockbg':'#0c0c0c',
+    '--strip':'#F4F2E9','--line':'#3a3a3a','--h2':'#151515','--stuck':'#FF2BD6','--idea':'#8fb7ff',
+    '--selbg':'rgba(198,242,45,.14)','--ish':'none','--crt':'rgba(0,0,0,.22)',
+    '--vig':'radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.45))',
+    '--deskbg':'#151515','--desksize':'auto','--deskanim':'none' }},
+  Matrix:{ note:'Black, neon green, falling code', vars:{
+    '--bg':'#000','--lime':'#00FF41','--mag':'#008F11','--purple':'#00b32c','--deep':'#001a05',
+    '--paper':'#021208','--ink':'#00FF41','--body':'#050d05','--text':'#00FF41',
+    '--on':'#000','--baroff':'#0b8a2a','--tbbg':'#000','--card':'#031006','--panel':'#031006','--clockbg':'#000',
+    '--strip':'#021208','--line':'#0a3d14','--h2':'#00FF41','--stuck':'#7dff9b','--idea':'#4fd1ff',
+    '--selbg':'rgba(0,255,65,.15)','--ish':'none','--crt':'rgba(0,40,0,.3)',
+    '--vig':'radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.6))',
+    '--deskbg':'#000','--desksize':'auto','--deskanim':'none',
+    '--edge':'#0a6b22','--sh':'#0a6b22','--rain':'.35','--raind':'block' }},
+  Dune:{ note:'Spice orange, desert sand, melange blue', vars:{
+    '--bg':'#1A2533','--lime':'#D9702B','--mag':'#EDD09F','--purple':'#8a3d10','--deep':'#2a3a52',
+    '--paper':'#EDD09F','--ink':'#1A2533','--body':'#223045','--text':'#EDD09F',
+    '--on':'#1A2533','--baroff':'#b87a45','--tbbg':'#111a26','--card':'#16202e','--panel':'#16202e','--clockbg':'#111a26',
+    '--strip':'#EDD09F','--line':'#34465e','--h2':'#b3500f','--stuck':'#EDD09F','--idea':'#5aa9ff',
+    '--selbg':'rgba(217,112,43,.22)','--ish':'none','--crt':'rgba(0,0,0,.12)',
+    '--vig':'radial-gradient(ellipse at center,transparent 65%,rgba(0,0,0,.35))',
+    '--deskbg':'radial-gradient(ellipse 120% 38% at 25% 112%,#8a5a2b 0 62%,transparent 63%),radial-gradient(ellipse 100% 34% at 85% 118%,#D9702B 0 58%,transparent 59%),linear-gradient(#1A2533,#2e4160)',
+    '--desksize':'auto','--deskanim':'none','--edge':'var(--lime)','--sh':'#7a4a1f' }}
+};
+// Defaults every theme inherits unless it overrides them
+const THEME_DEFAULTS = {'--edge':'var(--lime)','--sh':'var(--mag)','--rain':'0','--raind':'none'};
+let currentTheme = 'Joyful_Hippie';
+function applyTheme(name){
+  if (!THEMES[name]) return;
+  Object.entries({...THEME_DEFAULTS, ...THEMES[name].vars}).forEach(([k,v]) => document.documentElement.style.setProperty(k, v));
+  currentTheme = name;
+  try { localStorage.setItem('zk-theme', name); } catch(e) {}
+}
+Object.assign(APPS, {
+  themes:{ title:'C:\\Themes', icon:'dir', w:420, h:330,
+    html:() => `<div class="col"><div class="path">C:\\Themes\\</div><div class="content">${Object.entries(THEMES).map(([k,t]) =>
+      `<button class="trow" data-k="${k}"><span class="sw"><i style="background:${t.vars['--bg']}"></i><i style="background:${t.vars['--lime']}"></i><i style="background:${t.vars['--mag']}"></i></span>
+       <span>${k}.theme<br><small>${esc(t.note)}</small></span><span class="cur"></span></button>`).join('')}</div>
+      <div class="status">Click a .theme file to apply it</div></div>`,
+    init(win){
+      const rows = win.querySelectorAll('.trow'), st = win.querySelector('.status');
+      const mark = () => rows.forEach(r => r.querySelector('.cur').textContent = r.dataset.k === currentTheme ? '[active]' : '');
+      rows.forEach(r => r.addEventListener('click', () => { applyTheme(r.dataset.k); mark(); st.textContent = `Applied ${r.dataset.k}.theme`; }));
+      mark();
+    } }
+});
+try { applyTheme(localStorage.getItem('zk-theme') || currentTheme); } catch(e) { applyTheme(currentTheme); }
+
+/* =========================================================
+   Weather widget (Open-Meteo, no API key)
+   ========================================================= */
+const RABAT = {lat:34.0209, lon:-6.8416, label:'Rabat, Morocco'};
+// Resolve to visitor coordinates, or fall back to Rabat if denied/unavailable
+const locate = () => new Promise(res => {
+  if (!navigator.geolocation) return res(RABAT);
+  navigator.geolocation.getCurrentPosition(
+    p => res({lat:p.coords.latitude, lon:p.coords.longitude, label:'Your location'}),
+    () => res(RABAT), {timeout:6000, maximumAge:600000});
+});
+// WMO weather code -> {text, kind}
+function wxInfo(c, day){
+  if (c === 0) return {text:'Clear sky', kind: day === 0 ? 'moon' : 'sun'};
+  if (c <= 2)  return {text:'Partly cloudy', kind:'cloud'};
+  if (c === 3) return {text:'Overcast', kind:'cloud'};
+  if (c === 45 || c === 48) return {text:'Fog', kind:'fog'};
+  if (c >= 51 && c <= 57) return {text:'Drizzle', kind:'rain'};
+  if ((c >= 61 && c <= 67) || (c >= 80 && c <= 82)) return {text:'Rain', kind:'rain'};
+  if ((c >= 71 && c <= 77) || c === 85 || c === 86) return {text:'Snow', kind:'snow'};
+  if (c >= 95) return {text:'Thunderstorm', kind:'storm'};
+  return {text:'Unknown', kind:'cloud'};
+}
+function wxIcon(k){
+  const cloud = '<path d="M14 32h20a7 7 0 0 0 0-14 10 10 0 0 0-19 2A6 6 0 0 0 14 32z"/>';
+  const g = {
+    sun:`<g style="stroke:var(--lime)"><circle cx="24" cy="24" r="8"/><path d="M24 6v6M24 36v6M6 24h6M36 24h6M11 11l4 4M33 33l4 4M37 11l-4 4M15 33l-4 4"/></g>`,
+    moon:`<path style="stroke:var(--lime)" d="M30 8a16 16 0 1 0 10 22A14 14 0 0 1 30 8z"/>`,
+    cloud:cloud, fog:'<path d="M8 16h32M12 24h28M8 32h32"/>',
+    rain:cloud + '<path d="M16 38l-2 5M25 38l-2 5M34 38l-2 5"/>',
+    snow:cloud + '<path d="M16 40h.1M25 42h.1M34 40h.1"/>',
+    storm:cloud + '<path d="M26 33l-5 7h6l-3 7"/>'
+  };
+  return `<svg viewBox="0 0 48 48" style="stroke:var(--text)" aria-hidden="true">${g[k]}</svg>`;
+}
+async function loadWeather(){
+  const el = document.getElementById('wx'), loc = await locate();
+  try {
+    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat.toFixed(3)}&longitude=${loc.lon.toFixed(3)}&current_weather=true`);
+    if (!r.ok) throw new Error(r.status);
+    const c = (await r.json()).current_weather, w = wxInfo(c.weathercode, c.is_day);
+    el.innerHTML = `${wxIcon(w.kind)}<div><div class="t">${Math.round(c.temperature)}&deg;C</div><small>${w.text}</small><small>${esc(loc.label)}, wind ${Math.round(c.windspeed)} km/h</small></div>`;
+  } catch(e) { el.textContent = 'Weather unavailable right now.'; }
+}
+
+/* =========================================================
+   Wall.exe: anonymous notes on a brick wall
+   ---------------------------------------------------------
+   DATA LAYER: fetchNotes() and saveNote() are the ONLY functions that touch storage.
+   Replace their bodies with Firebase/Supabase calls later; the UI below stays as is.
+   A note is {id, text, ts (ISO string), place}.
+   ========================================================= */
+const NOTES_KEY = 'zk-wall';
+async function fetchNotes(){
+  try { return JSON.parse(localStorage.getItem(NOTES_KEY)) || []; } catch(e) { return []; }
+}
+async function saveNote(note){
+  const all = await fetchNotes();
+  all.unshift(note);
+  localStorage.setItem(NOTES_KEY, JSON.stringify(all.slice(0, 100)));   // throws if storage is full/blocked
+  return note;
+}
+
+const PIT = ['#ffe97a','#ffb3c7','#a8e6ff','#c4f5a0'];
+const hash = str => [...str].reduce((h,c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+
+Object.assign(APPS, {
+  wall:{ title:'Wall.exe', icon:'wall', w:580, h:480,
+    html:() => `<div class="col">
+      <form class="wf"><label for="wall-text">Leave an anonymous note</label>
+        <textarea id="wall-text" class="field" rows="2" maxlength="200" required placeholder="Say something nice..."></textarea>
+        <button class="btn" type="submit">Pin it</button> <small class="wst">Adds the date, time and your approximate location (rounded). Decline the prompt to stay unlocated.</small></form>
+      <div class="content wall" aria-live="polite"></div></div>`,
+    init(win){
+      const form = win.querySelector('form'), ta = win.querySelector('textarea'), wall = win.querySelector('.wall');
+      const st = win.querySelector('.wst'), btn = win.querySelector('.btn');
+      const render = async () => {
+        const notes = await fetchNotes();
+        wall.innerHTML = notes.length ? notes.map(n => {
+          const h = hash(n.id), when = new Date(n.ts).toLocaleString([], {dateStyle:'medium', timeStyle:'short'});
+          return `<article class="pi" style="--r:${(h % 9) - 4}deg;background:${PIT[h % PIT.length]}">
+            <p>${esc(n.text)}</p><small>${esc(n.by || 'Guest')}<br>${esc(when)}<br>${esc(n.place)}</small></article>`;
+        }).join('') : '<p class="empty">The wall is empty. Be the first.</p>';
+      };
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const text = ta.value.trim(); if (!text) return;
+        btn.disabled = true; st.textContent = 'Getting location...';
+        const loc = await locate();                       // same geolocation helper as the weather widget
+        const place = loc === RABAT ? 'Location unknown' : `Near ${loc.lat.toFixed(1)}, ${loc.lon.toFixed(1)}`;
+        try {
+          await saveNote({id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+                          text, by: window.SESSION || 'Guest', ts: new Date().toISOString(), place});
+          ta.value = ''; st.textContent = 'Pinned to the wall.';
+          await render();
+        } catch(err) { st.textContent = 'Could not save your note. Is browser storage blocked?'; }
+        btn.disabled = false;
+      });
+      render();
+    } },
+
+/* =========================================================
+   Snake.exe
+   ========================================================= */
+  snake:{ title:'Snake.exe', icon:'snake', w:370, h:540,
+    html:() => `<div class="snk">
+      <div class="shud"><span>Score: <b class="sc">0</b></span><span>Best: <b class="bs">0</b></span></div>
+      <div class="sbox"><canvas width="320" height="320" aria-label="Snake game board"></canvas>
+        <div class="sov"><h3>SNAKE</h3><p>Arrow keys or the D-pad</p><button class="btn">Play</button></div></div>
+      <div class="dpad"><button data-d="up" aria-label="Up">&#9650;</button><button data-d="left" aria-label="Left">&#9664;</button>
+        <button data-d="down" aria-label="Down">&#9660;</button><button data-d="right" aria-label="Right">&#9654;</button></div></div>`,
+    init(win){
+      const N = 16, C = 20, DIRS = {up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]};
+      const KEYS = {ArrowUp:'up', ArrowDown:'down', ArrowLeft:'left', ArrowRight:'right', w:'up', s:'down', a:'left', d:'right'};
+      const cv = win.querySelector('canvas'), ctx = cv.getContext('2d'), ov = win.querySelector('.sov');
+      const $ = q => win.querySelector(q);
+      const rnd = n => Math.floor(Math.random() * n);
+      const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+      let snake, dir, queue, food, score = 0, best = (() => { try { return +localStorage.getItem('zk-snake') || 0; } catch(e) { return 0; } })(), running = false;
+
+      const placeFood = () => { do { food = {x:rnd(N), y:rnd(N)}; } while (snake.some(s => s.x === food.x && s.y === food.y)); };
+      const hud = () => { $('.sc').textContent = score; $('.bs').textContent = best; };
+      function draw(){
+        ctx.fillStyle = '#0b0b0b'; ctx.fillRect(0, 0, N*C, N*C);
+        ctx.fillStyle = css('--mag'); ctx.fillRect(food.x*C + 3, food.y*C + 3, C - 6, C - 6);
+        snake.forEach((s,i) => { ctx.fillStyle = i ? css('--lime') : '#fff'; ctx.fillRect(s.x*C + 1, s.y*C + 1, C - 2, C - 2); });
+      }
+      function turn(d){                                   // queue turns; ignore reversals
+        const last = queue.length ? queue[queue.length - 1] : dir;
+        if (DIRS[d][0] + DIRS[last][0] === 0 && DIRS[d][1] + DIRS[last][1] === 0) return;
+        if (d !== last && queue.length < 2) queue.push(d);
+      }
+      function end(){
+        running = false; clearInterval(SNAKE.timer);
+        best = Math.max(best, score); hud(); try { localStorage.setItem('zk-snake', best); } catch(e) {}
+        ov.querySelector('h3').textContent = 'GAME OVER';
+        ov.querySelector('p').innerHTML = `Score: ${score}<div class="lb">${lbRows(best)}</div>`;
+        ov.querySelector('button').textContent = 'Restart';
+        ov.hidden = false;
+      }
+      function step(){
+        if (win.classList.contains('min')) return;       // paused while minimized
+        if (queue.length) dir = queue.shift();
+        const h = {x: snake[0].x + DIRS[dir][0], y: snake[0].y + DIRS[dir][1]};
+        const eat = h.x === food.x && h.y === food.y;
+        const body = eat ? snake : snake.slice(0, -1);   // the tail moves away unless we grow
+        if (h.x < 0 || h.y < 0 || h.x >= N || h.y >= N || body.some(s => s.x === h.x && s.y === h.y)) return end();
+        snake.unshift(h);
+        if (eat) { score++; placeFood(); hud(); } else snake.pop();
+        draw();
+      }
+      function start(){
+        snake = [{x:8,y:8}, {x:7,y:8}, {x:6,y:8}]; dir = 'right'; queue = []; score = 0;
+        placeFood(); hud(); draw(); ov.hidden = true; running = true;
+        clearInterval(SNAKE.timer); SNAKE.timer = setInterval(step, 110);
+      }
+      const press = d => running ? turn(d) : start();
+
+      SNAKE.key = e => {
+        if (!win.classList.contains('active')) return;   // only react when this window has focus
+        const d = KEYS[e.key]; if (!d) return;
+        e.preventDefault(); press(d);
+      };
+      document.addEventListener('keydown', SNAKE.key);
+      win.querySelectorAll('.dpad button').forEach(b => b.addEventListener('pointerdown', e => { e.preventDefault(); press(b.dataset.d); }));
+      ov.querySelector('button').addEventListener('click', start);
+      snake = [{x:8,y:8}, {x:7,y:8}, {x:6,y:8}]; placeFood(); draw();   // idle board behind the Play overlay
+    },
+    onClose(){ clearInterval(SNAKE.timer); document.removeEventListener('keydown', SNAKE.key); } }
+});
+const SNAKE = {timer:null, key:null};
+
+Object.assign(APPS, {
+  about:{ title:'zakaryae.txt - Notepad', icon:'txt', w:520, h:440, html:() => `<div class="doc" style="height:100%;white-space:pre-wrap">${esc(CV)}</div>` },
+  links:{ title:'C:\\Links', icon:'dir', w:420, h:260, html:() => `<div class="col"><div class="path">C:\\Links\\</div><div class="content"><table class="files"><tbody>
+    ${[['GitHub.lnk',LINKS.github],['LinkedIn.lnk',LINKS.linkedin],['Instagram.lnk',LINKS.instagram]].map(l => `<tr><td><a href="${esc(l[1])}" target="_blank" rel="noopener">${esc(l[0])}</a></td></tr>`).join('')}
+    </tbody></table></div></div>` }
+});
+
+/* =========================================================
+   Matrix rain columns (CSS does the falling; opacity is theme-controlled)
+   ========================================================= */
+(function buildRain(){
+  const rain = document.getElementById('rain'), glyphs = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾅ0123456789';
+  const cols = 38;
+  for (let i = 0; i < cols; i++) {
+    const c = document.createElement('span');
+    c.textContent = Array.from({length: 16}, () => glyphs[Math.floor(Math.random() * glyphs.length)]).join('');
+    c.style.left = (i * 100 / cols) + '%';
+    c.style.animationDuration = (6 + Math.random() * 9).toFixed(1) + 's';
+    c.style.animationDelay = (-Math.random() * 15).toFixed(1) + 's';
+    rain.appendChild(c);
+  }
+})();
+
+/* =========================================================
+   Gatekeeper + boot
+   ========================================================= */
+// Little synthesized chime (no audio file needed)
+function bootChime(){
+  try {
+    const C = new (window.AudioContext || window.webkitAudioContext)(), t = C.currentTime;
+    [261.63, 329.63, 392, 523.25].forEach((f, i) => {
+      const o = C.createOscillator(), g = C.createGain(), at = t + i * .12;
+      o.type = 'triangle'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, at);
+      g.gain.linearRampToValueAtTime(.12, at + .03);
+      g.gain.exponentialRampToValueAtTime(.001, at + .9);
+      o.connect(g); g.connect(C.destination); o.start(at); o.stop(at + 1);
+    });
+    setTimeout(() => C.close(), 2500);
+  } catch(e) {}
+}
+</script>
+<script>
+/* Boot: separate script so a runtime error elsewhere can never leave the overlay stuck. */
+(function () {
+  window.SESSION = 'Guest';
+  var booted = false;
+  function boot(name) {
     if (booted) return;
     booted = true;
-    user = (name || '').trim() || 'Guest';
-    store.set('os_name', user);
-    var b = $('#boot');
-    if (b) b.style.display = 'none';
-    try { startOS(); } catch (e) { console.error('startOS failed', e); }
+    var n = String(name || '').trim().slice(0, 24);
+    window.SESSION = n || 'Guest';
+    try { localStorage.setItem('zk-name', window.SESSION); } catch (e) {}
+    var g = document.getElementById('gate'); if (g) g.style.display = 'none';
+    var d = document.getElementById('desktop'), t = document.getElementById('taskbar');
+    if (d) d.removeAttribute('inert'); if (t) t.removeAttribute('inert');
+    try { if (typeof bootChime === 'function') bootChime(); } catch (e) {}
+    try { if (typeof loadWeather === 'function') loadWeather(); } catch (e) { console.error(e); }
+    var ready = (typeof dataReady !== 'undefined') ? dataReady : Promise.resolve();
+    Promise.resolve(ready).then(function () { try { openApp('portfolio'); } catch (e) { console.error(e); } });
   }
-  function initBoot() {
-    var inp = $('#bootName'), en = $('#bootEnter'), sk = $('#bootSkip');
-    if (en) en.addEventListener('click', function () { finishBoot(inp ? inp.value : ''); });
-    if (sk) sk.addEventListener('click', function () { finishBoot('Guest'); });
-    if (inp) inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') finishBoot(inp.value); });
-    if (inp) inp.focus();
-  }
-
-  /* ---------- STATUS BAR TYPEWRITER ---------- */
-  var tw = null;
-  function say(t) {
-    var s = $('#status'); if (!s) return;
-    clearInterval(tw); var i = 0; s.textContent = '';
-    tw = setInterval(function () { s.textContent = '> ' + t.slice(0, ++i); if (i >= t.length) clearInterval(tw); }, 18);
-  }
-  document.addEventListener('mouseover', function (e) {
-    var el = e.target.closest ? e.target.closest('[data-tip]') : null;
-    if (el) say(el.getAttribute('data-tip'));
-  });
-  document.addEventListener('focusin', function (e) { var el = e.target.closest && e.target.closest('[data-tip]'); if (el) say(el.getAttribute('data-tip')); });
-
-  /* ---------- WINDOWS ---------- */
-  var z = 100;
-  function win(id, title, w, h) {
-    var ex = document.getElementById('w-' + id);
-    if (ex) { ex.style.zIndex = ++z; return null; }
-    var el = document.createElement('div');
-    el.className = 'win'; el.id = 'w-' + id; el.style.zIndex = ++z;
-    var n = document.querySelectorAll('.win').length;
-    el.style.width = Math.min(w || 480, innerWidth - 8) + 'px';
-    el.style.left = Math.max(4, Math.min(60 + n * 28, innerWidth - (w || 480) - 8)) + 'px';
-    el.style.top = (40 + n * 28) + 'px';
-    el.innerHTML = '<div class="tb"><span>' + esc(title) + '</span><button type="button" aria-label="Close">x</button></div><div class="wb"></div>';
-    $('#desk').appendChild(el);
-    el.addEventListener('pointerdown', function () { el.style.zIndex = ++z; });
-    var tb = $('.tb', el);
-    $('button', tb).addEventListener('click', function () { el.dispatchEvent(new Event('close')); el.remove(); });
-    tb.addEventListener('pointerdown', function (e) {
-      if (e.target.tagName === 'BUTTON' || innerWidth < 700) return;
-      var sx = e.clientX - el.offsetLeft, sy = e.clientY - el.offsetTop;
-      tb.setPointerCapture(e.pointerId);
-      function mv(ev) { el.style.left = Math.max(0, Math.min(ev.clientX - sx, innerWidth - 60)) + 'px'; el.style.top = Math.max(0, Math.min(ev.clientY - sy, innerHeight - 60)) + 'px'; }
-      function up() { tb.removeEventListener('pointermove', mv); tb.removeEventListener('pointerup', up); }
-      tb.addEventListener('pointermove', mv); tb.addEventListener('pointerup', up);
+  function bind() {
+    var en = document.getElementById('g-enter'), sk = document.getElementById('g-skip'), inp = document.getElementById('gate-name');
+    if (en) en.addEventListener('click', function () { boot(inp ? inp.value : ''); });
+    if (sk) sk.addEventListener('click', function () { boot('Guest'); });
+    if (inp) { inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') boot(inp.value); }); inp.focus(); }
+    var rf = document.querySelector('#relay form');
+    if (rf) rf.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var i = rf.querySelector('input'), ok = rf.querySelector('.ok'); ok.hidden = false;
+      if (!i.checkValidity() || !i.value) { ok.textContent = 'Please enter a valid email address.'; return; }
+      try { var l = JSON.parse(localStorage.getItem('zk-news') || '[]'); l.push(i.value); localStorage.setItem('zk-news', JSON.stringify(l)); } catch (x) {}
+      i.value = ''; ok.textContent = 'Subscribed. Welcome aboard, ' + window.SESSION + '!';
     });
-    el.__body = $('.wb', el);
-    return el;
-  }
-
-  /* ---------- APPS ---------- */
-  var CV = 'ZAKARYAE\nCreative technologist -> software engineer\n\n[2018-2025] CREATIVE DIRECTION\nDigital marketing, brand identity and campaign\nstrategy. Shaped the facade of products, from the\nfirst idea to the last pixel.\n\n[NOW] 1337, MOROCCO\nStudying software engineering. C, pointers, memory\nmanagement, data structures. Rebuilding libft from\nscratch and learning how code meets hardware.\n\n[PRINCIPLE]\nStrip the abstraction. Understand allocation,\nownership and failure modes first.\n\nContact: hello@zakaryae.me';
-
-  function openCV() { var w = win('cv', 'zakaryae.txt', 460); if (!w) return; w.__body.innerHTML = '<pre class="txt">' + esc(CV) + '</pre>'; }
-
-  function openPortfolio() {
-    var w = win('port', 'Portfolio.exe', 640); if (!w) return;
-    var b = w.__body, work = DATA.work || [];
-    function list() {
-      b.innerHTML = work.length ? '<div class="grid"></div>' : 'No projects yet. Add one in /master.';
-      var g = $('.grid', b); if (!g) return;
-      work.forEach(function (p, i) {
-        var c = document.createElement('button'); c.className = 'card'; c.type = 'button';
-        c.innerHTML = (p.images && p.images[0] ? '<img alt="" src="' + esc(p.images[0]) + '">' : '') + '<b>' + esc(p.title) + '</b><br>' + esc(p.summary);
-        c.addEventListener('click', function () { detail(p); });
-        g.appendChild(c);
-      });
-    }
-    function detail(p) {
-      var imgs = p.images || [], i = 0;
-      b.innerHTML = '<button type="button" id="pb">&lt; back</button><h3>' + esc(p.title) + '</h3><div class="gal"><img alt=""><div class="row"><button type="button" id="gp">&lt;</button><span id="gc"></span><button type="button" id="gn">&gt;</button></div></div><div>' + (p.description || '') + '</div>';
-      var im = $('img', b);
-      function show() { if (!imgs.length) { $('.gal', b).style.display = 'none'; return; } im.src = imgs[i]; $('#gc', b).textContent = (i + 1) + ' / ' + imgs.length; }
-      $('#pb', b).addEventListener('click', list);
-      $('#gp', b).addEventListener('click', function () { i = (i - 1 + imgs.length) % imgs.length; show(); });
-      $('#gn', b).addEventListener('click', function () { i = (i + 1) % imgs.length; show(); });
-      show();
-    }
-    list();
-  }
-
-  function openBlog() {
-    var w = win('blog', 'Blog.txt', 560, 0); if (!w) return;
-    var b = w.__body, posts = (DATA.posts || []).slice().sort(function (a, c) { return a.date < c.date ? 1 : -1; });
-    b.innerHTML = '<div class="row" id="pl"></div><pre class="txt" id="pbody"></pre>';
-    function pick(p) { $('#pbody', b).textContent = p.title + '  (' + p.date + ')\n\n' + p.body; }
-    posts.forEach(function (p) { var x = document.createElement('button'); x.type = 'button'; x.textContent = p.title; x.addEventListener('click', function () { pick(p); }); $('#pl', b).appendChild(x); });
-    if (posts[0]) pick(posts[0]); else $('#pbody', b).textContent = 'No posts yet.';
-  }
-
-  function tagFor(s) {
-    s = (s || '').toLowerCase();
-    if (s.indexOf('segfault') > -1) return '[SEGFAULT]';
-    if (s.indexOf('progress') > -1 || s === 'wip') return '[WIP]';
-    return '[COMPLETED]';
-  }
-  function openProjects() {
-    var w = win('proj', 'Projects.dir', 620); if (!w) return;
-    var rows = (DATA.wip || []).map(function (r) { return '<tr><td>' + esc(r.file) + '</td><td>' + esc(r.type) + '</td><td class="tag">' + tagFor(r.status) + '</td><td>' + esc(r.note) + '</td><td>' + esc(r.date) + '</td></tr>'; }).join('');
-    w.__body.innerHTML = '<table><tr><th>File</th><th>Type</th><th>Status</th><th>Note</th><th>Modified</th></tr>' + (rows || '<tr><td colspan=5>Empty.</td></tr>') + '</table>';
-  }
-
-  function openLinks() {
-    var w = win('links', 'Links.dir', 360); if (!w) return;
-    var s = DATA.siteSettings || {};
-    var L = [['github.lnk', s.github, 'Read the source.'], ['linkedin.lnk', s.linkedin, 'The professional face.'], ['instagram.lnk', 'https://www.instagram.com/zakaryve/', 'Pictures, not pointers.']];
-    w.__body.innerHTML = L.map(function (l) { return '<p><a data-tip="' + esc(l[2]) + '" style="color:var(--tx)" target="_blank" rel="noopener" href="' + esc(l[1]) + '">' + esc(l[0]) + '</a></p>'; }).join('');
-  }
-
-  function setTheme(t) { if (t === 'swiss') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t); store.set('os_theme', t); }
-  function openThemes() {
-    var w = win('themes', 'Themes.dir', 340); if (!w) return;
-    var T = [['Env_Swiss.cfg', 'swiss', 'Black, white, lime. Zero noise.'], ['Env_Acid.cfg', 'acid', 'Tie-dye for the sleep-deprived.'], ['Env_Matrix.cfg', 'matrix', 'There is no spoon, only stdout.'], ['Env_XP.cfg', 'xp', 'Hills. Always the hills.']];
-    T.forEach(function (t) { var b = document.createElement('button'); b.type = 'button'; b.className = 'card'; b.style.cssText = 'display:block;width:100%;margin-bottom:.5rem'; b.textContent = t[0]; b.setAttribute('data-tip', t[2]); b.addEventListener('click', function () { setTheme(t[1]); }); w.__body.appendChild(b); });
-  }
-
-  var TRACKS = [['Lo-fi Beat 01 (placeholder)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'], ['Boom-bap Sketch 02 (placeholder)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'], ['Rainy Day Loop 03 (placeholder)', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3']];
-  function openVMPC() {
-    var w = win('vmpc', 'VMPC.exe', 380); if (!w) return;
-    var a = new Audio(), i = 0, b = w.__body;
-    b.innerHTML = '<div class="mq"><span id="mt"></span></div><div class="row"><button type="button" id="pv">|&lt;</button><button type="button" id="pp">play</button><button type="button" id="nx">&gt;|</button></div><div id="ps"></div><div class="row"><input id="rec" placeholder="Recommend a track"><button type="button" id="rb">Send</button></div><div id="rm"></div>';
-    function load(play) { a.src = TRACKS[i][1]; $('#mt', b).textContent = 'Now playing: ' + TRACKS[i][0] + '  ///  Nujabes-inspired hip-hop sessions  ///  '; if (play) a.play().catch(function () { $('#ps', b).textContent = 'Cannot play this track here. Check your connection.'; }); }
-    a.addEventListener('play', function () { $('#pp', b).textContent = 'pause'; $('#ps', b).textContent = ''; });
-    a.addEventListener('pause', function () { $('#pp', b).textContent = 'play'; });
-    a.addEventListener('ended', function () { i = (i + 1) % TRACKS.length; load(true); });
-    $('#pp', b).addEventListener('click', function () { if (!a.src) load(false); a.paused ? a.play().catch(function () { $('#ps', b).textContent = 'Cannot play this track here. Check your connection.'; }) : a.pause(); });
-    $('#nx', b).addEventListener('click', function () { i = (i + 1) % TRACKS.length; load(!a.paused); });
-    $('#pv', b).addEventListener('click', function () { i = (i - 1 + TRACKS.length) % TRACKS.length; load(!a.paused); });
-    $('#rb', b).addEventListener('click', function () { var v = $('#rec', b).value.trim(); if (!v) return; var r = store.get('os_recs', []); r.push({ t: v, by: user }); store.set('os_recs', r); $('#rec', b).value = ''; $('#rm', b).textContent = 'Saved. Thanks, ' + user + '.'; });
-    load(false);
-    w.addEventListener('close', function () { a.pause(); a.src = ''; });
-  }
-
-  function openSnake() {
-    var w = win('snake', 'Snake.exe', 340); if (!w) return;
-    var b = w.__body, N = 15, S = 20;
-    b.innerHTML = '<div id="sc"></div><canvas width="300" height="300"></canvas><div class="row"><button type="button" data-d="L">&lt;</button><button type="button" data-d="U">^</button><button type="button" data-d="D">v</button><button type="button" data-d="R">&gt;</button><button type="button" id="rs">restart</button></div><div id="lb"></div>';
-    var cv = $('canvas', b), c = cv.getContext('2d'), sn, dr, nd, fd, sc, over, tm;
-    var V = { L: [-1, 0], R: [1, 0], U: [0, -1], D: [0, 1] };
-    function board() {
-      var hs = store.get('os_snake', 0), mock = [['ptr_master', 42], ['segfault_sam', 31], ['malloc_mo', 18]];
-      mock.push([user + ' (best)', hs]); mock.sort(function (x, y) { return y[1] - x[1]; });
-      $('#lb', b).innerHTML = '<b>Leaderboard</b><br>' + mock.map(function (m, k) { return (k + 1) + '. ' + esc(m[0]) + ' ' + m[1]; }).join('<br>');
-    }
-    function reset() { sn = [[7, 7], [6, 7], [5, 7]]; dr = 'R'; nd = 'R'; sc = 0; over = false; food(); clearInterval(tm); tm = setInterval(tick, 120); board(); }
-    function food() { do { fd = [Math.floor(Math.random() * N), Math.floor(Math.random() * N)]; } while (sn.some(function (p) { return p[0] === fd[0] && p[1] === fd[1]; })); }
-    function tick() {
-      var o = { L: 'R', R: 'L', U: 'D', D: 'U' }; if (o[nd] !== dr) dr = nd;
-      var h = [sn[0][0] + V[dr][0], sn[0][1] + V[dr][1]];
-      if (h[0] < 0 || h[1] < 0 || h[0] >= N || h[1] >= N || sn.some(function (p) { return p[0] === h[0] && p[1] === h[1]; })) { over = true; clearInterval(tm); if (sc > store.get('os_snake', 0)) store.set('os_snake', sc); board(); }
-      else { sn.unshift(h); if (h[0] === fd[0] && h[1] === fd[1]) { sc++; food(); } else sn.pop(); }
-      var cs = getComputedStyle(document.documentElement);
-      c.fillStyle = '#000'; c.fillRect(0, 0, 300, 300);
-      c.fillStyle = '#ff3e3e'; c.fillRect(fd[0] * S + 2, fd[1] * S + 2, S - 4, S - 4);
-      c.fillStyle = '#C6F22D'; sn.forEach(function (p) { c.fillRect(p[0] * S + 1, p[1] * S + 1, S - 2, S - 2); });
-      $('#sc', b).textContent = 'Score ' + sc + '  Best ' + store.get('os_snake', 0) + (over ? '  GAME OVER' : '');
-    }
-    function key(e) { var m = { ArrowLeft: 'L', ArrowRight: 'R', ArrowUp: 'U', ArrowDown: 'D' }[e.key]; if (m && document.getElementById('w-snake')) { nd = m; e.preventDefault(); } }
-    document.addEventListener('keydown', key);
-    b.querySelectorAll('[data-d]').forEach(function (x) { x.addEventListener('click', function () { nd = x.getAttribute('data-d'); }); });
-    $('#rs', b).addEventListener('click', reset);
-    w.addEventListener('close', function () { clearInterval(tm); document.removeEventListener('keydown', key); });
-    reset();
-  }
-
-  function openWall() {
-    var w = win('wall', 'Wall.exe', 420); if (!w) return;
-    var b = w.__body;
-    b.innerHTML = '<div class="row"><input id="wn" maxlength="140" placeholder="Leave a note (anonymous)"><button type="button" id="wp">Post</button></div><div id="wm"></div><div id="wl"></div>';
-    function render() { $('#wl', b).innerHTML = store.get('os_wall', []).slice().reverse().map(function (n) { return '<div class="note">' + esc(n.t) + '<small>' + esc(n.by) + ' | ' + esc(n.at) + ' | ' + esc(n.geo) + '</small></div>'; }).join('') || 'No notes yet. Be the first.'; }
-    function save(geo) {
-      var v = $('#wn', b).value.trim(); if (!v) return;
-      var l = store.get('os_wall', []); l.push({ t: v, by: user, at: new Date().toLocaleString(), geo: geo }); store.set('os_wall', l);
-      $('#wn', b).value = ''; $('#wm', b).textContent = ''; render();
-    }
-    $('#wp', b).addEventListener('click', function () {
-      if (!$('#wn', b).value.trim()) return;
-      if (!navigator.geolocation) return save('location unavailable');
-      $('#wm', b).textContent = 'Locating…';
-      navigator.geolocation.getCurrentPosition(function (p) { save(p.coords.latitude.toFixed(2) + ', ' + p.coords.longitude.toFixed(2)); }, function () { save('location denied'); }, { timeout: 6000 });
-    });
-    render();
-  }
-
-  var APPS = [
-    ['zakaryae.txt', 'TXT', 'A CV with fewer semicolons than you would expect.', openCV],
-    ['Portfolio.exe', 'EXE', 'Case studies. Click responsibly.', openPortfolio],
-    ['Blog.txt', 'TXT', 'Thoughts, unbuffered.', openBlog],
-    ['Projects.dir', 'DIR', 'Everything I started. Some even finished.', openProjects],
-    ['Links.dir', 'DIR', 'Portals to the outside world.', openLinks],
-    ['VMPC.exe', 'MP3', 'Boom-bap for debugging sessions.', openVMPC],
-    ['Snake.exe', 'GAME', 'Do not eat yourself.', openSnake],
-    ['Wall.exe', 'WALL', 'Leave a mark. Literally, with coordinates.', openWall],
-    ['Themes.dir', 'CFG', 'Change the whole mood in one click.', openThemes]
-  ];
-
-  /* ---------- ICONS: draggable, dblclick launches (tap on touch) ---------- */
-  function buildIcons() {
-    var box = $('#icons'); box.innerHTML = '';
-    APPS.forEach(function (a) {
-      var el = document.createElement('div'); el.className = 'ico'; el.tabIndex = 0; el.setAttribute('data-tip', a[2]);
-      el.innerHTML = '<b>[' + esc(a[1]) + ']</b><span>' + esc(a[0]) + '</span>';
-      var ox = 0, oy = 0, moved = false, sx, sy;
-      function launch() { try { a[3](); } catch (e) { console.error(e); } }
-      el.addEventListener('pointerdown', function (e) {
-        sx = e.clientX; sy = e.clientY; moved = false; el.setPointerCapture(e.pointerId);
-        var bx = ox, by = oy;
-        function mv(ev) {
-          var dx = ev.clientX - sx, dy = ev.clientY - sy;
-          if (!moved && Math.abs(dx) + Math.abs(dy) < 6) return;
-          moved = true; el.classList.add('drag'); ox = bx + dx; oy = by + dy; el.style.translate = ox + 'px ' + oy + 'px';
-        }
-        function up(ev) {
-          el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); el.classList.remove('drag');
-          var r = el.getBoundingClientRect(), dx2 = 0, dy2 = 0;
-          if (r.left < 0) dx2 = -r.left; if (r.top < 0) dy2 = -r.top;
-          if (r.right > innerWidth) dx2 = innerWidth - r.right; if (r.bottom > innerHeight - 28) dy2 = innerHeight - 28 - r.bottom;
-          if (dx2 || dy2) { ox += dx2; oy += dy2; el.style.translate = ox + 'px ' + oy + 'px'; }
-          if (!moved && ev.pointerType !== 'mouse') launch();
-        }
-        el.addEventListener('pointermove', mv); el.addEventListener('pointerup', up);
-      });
-      el.addEventListener('dblclick', launch);
-      el.addEventListener('keydown', function (e) { if (e.key === 'Enter') launch(); });
-      box.appendChild(el);
+    var sd = document.getElementById('showdesk'), hid = [];
+    if (sd) sd.addEventListener('click', function () {
+      if (typeof wins === 'undefined') return;
+      if (hid.length) { hid.forEach(function (id) { if (wins[id]) wins[id].el.classList.remove('min'); }); var k = hid[hid.length - 1]; hid = []; if (wins[k]) focusWin(k); }
+      else Object.keys(wins).forEach(function (id) { if (!wins[id].el.classList.contains('min')) { wins[id].el.classList.add('min'); hid.push(id); } });
     });
   }
-
-  /* ---------- WEATHER ---------- */
-  function weather() {
-    var el = $('#wx');
-    function go(lat, lon, label) {
-      fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current_weather=true')
-        .then(function (r) { return r.json(); })
-        .then(function (d) { el.textContent = label + ': ' + Math.round(d.current_weather.temperature) + '°C, wind ' + Math.round(d.current_weather.windspeed) + ' km/h'; })
-        .catch(function () { el.textContent = label + ': weather unavailable'; });
-    }
-    var city = (DATA.siteSettings && DATA.siteSettings.weatherCity) || 'Rabat, Morocco';
-    if (navigator.geolocation) navigator.geolocation.getCurrentPosition(function (p) { go(p.coords.latitude, p.coords.longitude, 'Your location'); }, function () { go(34.02, -6.84, city); }, { timeout: 5000 });
-    else go(34.02, -6.84, city);
-  }
-
-  function relay() {
-    var btn = $('#relayBtn'), m = $('#relayMail'), msg = $('#relayMsg');
-    if (!btn || !m || !msg) return;
-    btn.addEventListener('click', function () {
-      var v = m.value.trim();
-      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) { msg.textContent = 'Enter a valid email address.'; return; }
-      var l = store.get('os_news', []); l.push(v); store.set('os_news', l);
-      m.value = ''; msg.textContent = 'Subscribed. Welcome aboard, ' + user + '.';
-    });
-  }
-
-  /* ---------- START ---------- */
-  function startOS() {
-    setTheme(store.get('os_theme', 'swiss'));
-    buildIcons(); relay(); weather();
-    say('Welcome, ' + user + '. Double-click an icon to launch it.');
-  }
-
-  function load() {
-    initBoot();
-    fetch('data.json').then(function (r) { if (!r.ok) throw 0; return r.json(); })
-      .then(function (d) { DATA = d; }).catch(function () { DATA = FALLBACK; });
-    DATA = DATA || FALLBACK;
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load); else load();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind); else bind();
 })();
 </script>
 </body>
