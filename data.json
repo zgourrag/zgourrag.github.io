@@ -1,31 +1,41 @@
 {
+  "siteSettings": {
+    "siteName": "zakaryae-os",
+    "tagline": "creative technologist and software engineer",
+    "email": "hello@zakaryae.me",
+    "github": "https://github.com/zgourrag",
+    "linkedin": "https://www.linkedin.com/in/zakaryae",
+    "instagram": "https://instagram.com/zakaryve",
+    "weatherCity": "Rabat, Morocco"
+  },
   "work": [
     {
-      "title": "Project One",
-      "summary": "Short description of what it is.",
+      "title": "Portfolio OS",
+      "summary": "A browser-based creative portfolio modeled as a desktop operating system.",
       "images": [
-        "https://placehold.co/900x500?text=Project+One+1",
-        "https://placehold.co/900x500?text=Project+One+2"
+        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80"
       ],
-      "description": "<p>The problem, your role, and the result go here.</p>\n\n<p>Add as many paragraphs as you like. <strong>HTML works.</strong></p>"
+      "description": "<p>This project reframes a personal portfolio as an immersive desktop environment: files, folders, apps, and layered interfaces instead of a conventional landing page.</p>\n\n<p>The goal was to turn my digital identity into a navigable operating system while preserving clarity, utility, and story. Each app surfaces part of my work, process, and background—without sacrificing performance or static deployment simplicity.</p>\n\n<p>Built with semantic HTML, CSS variables, and vanilla JavaScript, it remains lightweight and portable while still feeling expressive and intentionally crafted.</p>"
     },
     {
-      "title": "Project Two",
-      "summary": "Tools used, what you learned.",
+      "title": "Signal Systems",
+      "summary": "Identity design and digital systems for culture-oriented product launches.",
       "images": [
-        "https://placehold.co/900x500?text=Project+Two+1",
-        "https://placehold.co/900x500?text=Project+Two+2",
-        "https://placehold.co/900x500?text=Project+Two+3"
+        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80"
       ],
-      "description": "<p>Explain the approach, the tools and what you would do differently.</p>"
+      "description": "<p>I guided storytelling and visual architecture for digital campaigns that needed both emotional appeal and operational consistency.</p>\n\n<p>My work balanced strategic messaging, interface systems, and conversion-focused content so that the brand felt coherent across the full user journey—from discovery to trust to action.</p>"
     },
     {
-      "title": "Project Three",
-      "summary": "A one-line pitch goes here.",
+      "title": "1337 Foundations",
+      "summary": "Low-level engineering training and memory-first problem solving.",
       "images": [
-        "https://placehold.co/900x500?text=Project+Three+1"
+        "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80"
       ],
-      "description": "<p>Write the full case study here.</p>"
+      "description": "<p>At 1337, I moved deeper into systems thinking: C, pointers, memory, data structures, and the discipline of understanding exactly how software interacts with hardware.</p>\n\n<p>The shift is both technical and philosophical. It is not only about writing correct code, it is about building intuition for allocation, ownership, and failure modes that only emerge when abstractions are stripped away.</p>"
     }
   ],
   "posts": [
@@ -47,6 +57,20 @@
       "status": "in progress",
       "note": "Initial draft done, revision time",
       "date": "2026-11-03"
+    },
+    {
+      "file": "mini_printf.c",
+      "type": "C",
+      "status": "work in progress",
+      "note": "Formatting engine and edge cases",
+      "date": "2026-10-18"
+    },
+    {
+      "file": "brand_systems.pdf",
+      "type": "Design",
+      "status": "segfault",
+      "note": "Reframing the messaging architecture",
+      "date": "2026-09-27"
     }
   ]
 }

@@ -14,46 +14,57 @@ media_folder: images/uploads             # where uploaded photos are committed (
 public_folder: /images/uploads           # how data.json refers to them on the site
 
 collections:
-  - name: content
-    label: Site Content
+  - name: site
+    label: Site Settings
     files:
-      # ONE file entry on purpose: data.json holds all lists, so each entry must save the whole file.
       - name: data
-        label: Portfolio, Blog and Unfinished Projects
+        label: Portfolio, Blog and Settings
         file: data.json
         fields:
-          - label: Portfolio projects
+          - label: Site Settings
+            name: siteSettings
+            widget: object
+            collapsed: false
+            fields:
+              - { label: Site Name, name: siteName, widget: string }
+              - { label: Tagline, name: tagline, widget: string }
+              - { label: Email, name: email, widget: string }
+              - { label: GitHub URL, name: github, widget: string }
+              - { label: LinkedIn URL, name: linkedin, widget: string }
+              - { label: Instagram URL, name: instagram, widget: string }
+              - { label: Weather City, name: weatherCity, widget: string }
+
+          - label: Portfolio Projects
             name: work
             widget: list
             summary: "{{fields.title}}"
             fields:
               - { label: Title, name: title, widget: string }
-              - { label: Card summary, name: summary, widget: string }
-              - label: Images (shown in order in the case study; the first is the thumbnail)
+              - { label: Summary, name: summary, widget: string }
+              - label: Images
                 name: images
                 widget: list
                 required: false
                 field: { label: Image, name: image, widget: image }
-              - { label: Description, name: description, widget: text,
-                  hint: "Separate paragraphs with a blank line. A paragraph starting with < is treated as HTML." }
+              - { label: Description, name: description, widget: text }
 
-          - label: Blog posts
+          - label: Blog Posts
             name: posts
             widget: list
             summary: "{{fields.date}} - {{fields.title}}"
             fields:
-              - { label: Title (file name style, e.g. my_post.txt), name: title, widget: string }
-              - { label: Date, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
-              - { label: Body, name: body, widget: text, hint: "Separate paragraphs with a blank line." }
+              - { label: Title, name: title, widget: string }
+              - { label: Date, name: date, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
+              - { label: Body, name: body, widget: text }
 
-          - label: Unfinished projects
+          - label: Work in Progress
             name: wip
             widget: list
             required: false
             summary: "{{fields.file}}"
             fields:
-              - { label: File name, name: file, widget: string }
+              - { label: File Name, name: file, widget: string }
               - { label: Type, name: type, widget: string }
               - { label: Status, name: status, widget: string }
               - { label: Note, name: note, widget: string }
-              - { label: Modified, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+              - { label: Modified, name: date, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
