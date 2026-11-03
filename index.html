@@ -11,6 +11,11 @@
 /* ===== TOKENS: Joyful Hippie Psychedelic ===== */
 :root{
   --bg:#fbe9d0; --lime:#ff477e; --mag:#70d6ff; --purple:#ff9f1c; --deep:#ffd166;
+  /* extra theme tokens (the Themes.dir app overwrites all of these) */
+  --on:#fff; --baroff:#b8a99a; --tbbg:#dcd3c6; --card:#fff; --panel:#fefefe; --clockbg:#eaddcd;
+  --strip:#f4ebd8; --line:#ddd; --h2:#ff477e; --stuck:#ff9f1c; --idea:#1982c4;
+  --selbg:rgba(255,255,255,.4); --ish:1px 1px 0 #fff; --crt:rgba(0,0,0,.08); --vig:linear-gradient(transparent,transparent);
+  --deskbg:radial-gradient(circle at 0% 0%,#ff5e5b,#ffca3a,#8ac926,#1982c4,#6a4c93); --desksize:600% 600%; --deskanim:drift;
   --paper:#fffdf7; --ink:#2b1a1c; --body:#f4ebd8; --text:#2b1a1c; --tb:44px;
   --font:'VT323','Courier New',monospace;
 }
@@ -22,9 +27,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* ===== DESKTOP BACKGROUND: Tie-dye fluid gradient ===== */
 #desktop{position:fixed;inset:0 0 var(--tb) 0;overflow:hidden;
-  background: radial-gradient(circle at 0% 0%, #ff5e5b, #ffca3a, #8ac926, #1982c4, #6a4c93);
-  background-size: 600% 600%;
-  animation: drift 20s ease-in-out infinite alternate}
+  background:var(--deskbg);background-size:var(--desksize);
+  animation:var(--deskanim) 20s ease-in-out infinite alternate}
 @keyframes drift{
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -33,16 +37,16 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* Subtle CRT overlay */
 #crt{position:fixed;inset:0;pointer-events:none;z-index:99999;
-  background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.08) 3px)}
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0 2px,var(--crt) 3px),var(--vig)}
 
 /* ===== ICONS ===== */
 #icons{position:absolute;inset:12px auto auto 12px;display:grid;gap:8px;
   grid-auto-flow:row;grid-template-rows:repeat(auto-fill,104px);height:calc(100% - 24px);grid-auto-columns:104px}
 .icon{width:104px;height:100px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 2px;text-align:center;
-  font-size:20px;word-break:break-all;border:1px dashed transparent; font-weight: bold; text-shadow: 1px 1px 0 #fff;}
+  font-size:20px;word-break:break-all;border:1px dashed transparent; font-weight: bold; text-shadow:var(--ish);}
 .icon svg{width:44px;height:44px;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.15))}
-.icon.sel{border-color:var(--lime);background:rgba(255,255,255,.4)}
-.icon span{padding:0 3px}.icon.sel span{background:var(--lime);color:#fff;text-shadow:none;}
+.icon.sel{border-color:var(--lime);background:var(--selbg)}
+.icon span{padding:0 3px}.icon.sel span{background:var(--lime);color:var(--on);text-shadow:none;}
 
 /* ===== WINDOWS ===== */
 .win{position:absolute;display:flex;flex-direction:column;background:var(--body);
@@ -50,9 +54,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   min-width:260px;max-width:100vw}
 .win.min{display:none}
 .win.max{left:0!important;top:0!important;width:100%!important;height:100%!important;box-shadow:none}
-.bar{display:flex;align-items:center;gap:8px;background:var(--lime);color:#fff;padding:3px 4px 3px 8px;
+.bar{display:flex;align-items:center;gap:8px;background:var(--lime);color:var(--on);padding:3px 4px 3px 8px;
   cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
-.win:not(.active) .bar{background:#b8a99a;color:#fff}
+.win:not(.active) .bar{background:var(--baroff);color:var(--on)}
 .bar:active{cursor:grabbing}
 .bar .t{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:23px; letter-spacing:1px}
 .ctl{width:26px;height:24px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);line-height:1;font-size:20px;
@@ -63,54 +67,54 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* app: portfolio */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;padding:14px}
-.card{border:2px solid var(--text);background:#fff;display:flex;flex-direction:column;box-shadow:3px 3px 0 var(--text)}
+.card{border:2px solid var(--text);background:var(--card);display:flex;flex-direction:column;box-shadow:3px 3px 0 var(--text)}
 .card:hover{border-color:var(--mag);box-shadow:4px 4px 0 var(--lime);transform:translateY(-2px);transition:transform 0.1s}
 .thumb{aspect-ratio:4/3;background-size:cover;background-position:center;border-bottom:2px solid var(--text)}
 .card b{display:block;padding:6px 8px 0;color:var(--lime);font-weight:bold;font-size:24px}
 .card p{padding:0 8px 8px;font-size:19px;opacity:.85}
 
 /* app: blog (text editor) */
-.menu{display:flex;gap:16px;padding:3px 10px;background:var(--body);color:var(--ink);border-bottom:2px solid var(--ink)}
+.menu{display:flex;gap:16px;padding:3px 10px;background:var(--strip);color:var(--ink);border-bottom:2px solid var(--ink)}
 .editor{display:flex;height:100%;min-height:0}
-.posts{width:34%;min-width:130px;background:#fefefe;border-right:2px solid var(--lime);overflow:auto}
-.posts button{display:block;width:100%;text-align:left;padding:8px 10px;border-bottom:1px dashed #ccc}
-.posts button.on,.posts button:hover{background:var(--mag);color:#fff}
+.posts{width:34%;min-width:130px;background:var(--panel);border-right:2px solid var(--lime);overflow:auto}
+.posts button{display:block;width:100%;text-align:left;padding:8px 10px;border-bottom:1px dashed var(--line)}
+.posts button.on,.posts button:hover{background:var(--mag);color:var(--on)}
 .posts small{display:block;opacity:.8;font-size:17px}
 .doc{flex:1;background:var(--paper);color:var(--ink);padding:16px 18px;overflow:auto;font-size:23px;line-height:1.25}
-.doc h2{font-weight:bold;font-size:32px;margin-bottom:2px;color:var(--lime)}
+.doc h2{font-weight:bold;font-size:32px;margin-bottom:2px;color:var(--h2)}
 .doc em{display:block;font-style:normal;color:var(--purple);margin-bottom:12px}
 .doc p{margin-bottom:12px;max-width:62ch}
 .col{display:flex;flex-direction:column;height:100%}
 
 /* app: folder */
-.path{padding:4px 10px;background:#fff;border-bottom:2px solid var(--lime);color:var(--lime);font-weight:bold}
-.files{width:100%;border-collapse:collapse;background:var(--paper)}
-.files th{position:sticky;top:0;background:var(--mag);color:#fff;text-align:left;font-weight:bold;padding:4px 10px;border-bottom:2px solid var(--ink)}
-.files td{padding:6px 10px;border-bottom:1px dashed #ddd;white-space:nowrap}
+.path{padding:4px 10px;background:var(--panel);border-bottom:2px solid var(--lime);color:var(--lime);font-weight:bold}
+.files{width:100%;border-collapse:collapse;background:var(--card)}
+.files th{position:sticky;top:0;background:var(--mag);color:var(--on);text-align:left;font-weight:bold;padding:4px 10px;border-bottom:2px solid var(--ink)}
+.files td{padding:6px 10px;border-bottom:1px dashed var(--line);white-space:nowrap}
 .files tr:hover td{background:rgba(112,214,255,.2)}
-.tag{border:1px solid currentColor;padding:0 6px;font-size:18px;background:#fff}
-.wip{color:var(--lime)}.stuck{color:var(--purple)}.idea{color:#1982c4}
-.status{padding:3px 10px;background:var(--body);color:var(--ink);border-top:2px solid var(--ink);font-size:19px}
+.tag{border:1px solid currentColor;padding:0 6px;font-size:18px;background:var(--card)}
+.wip{color:var(--lime)}.stuck{color:var(--stuck)}.idea{color:var(--idea)}
+.status{padding:3px 10px;background:var(--strip);color:var(--ink);border-top:2px solid var(--ink);font-size:19px}
 
 /* ===== TASKBAR / START ===== */
 #taskbar{position:fixed;left:0;right:0;bottom:0;height:var(--tb);display:flex;align-items:center;gap:6px;padding:4px 6px;
-  background:#dcd3c6;border-top:2px solid var(--text);z-index:90000;box-shadow:0 -2px 10px rgba(0,0,0,0.1)}
-#start{display:flex;align-items:center;gap:8px;height:100%;padding:0 12px 0 8px;background:var(--lime);color:#fff;
+  background:var(--tbbg);border-top:2px solid var(--text);z-index:90000;box-shadow:0 -2px 10px rgba(0,0,0,0.1)}
+#start{display:flex;align-items:center;gap:8px;height:100%;padding:0 12px 0 8px;background:var(--lime);color:var(--on);
   border:2px solid var(--ink);box-shadow:inset -2px -2px 0 rgba(0,0,0,.2),2px 2px 0 rgba(0,0,0,.1);font-size:24px;font-weight:bold}
 #start svg{width:20px;height:20px}
 #start[aria-expanded=true]{box-shadow:inset 2px 2px 0 rgba(0,0,0,.45)}
 #tasks{flex:1;display:flex;gap:6px;overflow-x:auto;height:100%;scrollbar-width:none}
 .task{min-width:90px;max-width:170px;padding:0 10px;height:100%;border:2px solid var(--ink);background:var(--body);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
-.task.active{border-color:var(--ink);background:var(--mag);color:#fff;box-shadow:inset 2px 2px 0 rgba(0,0,0,.2)}
-#clock{padding:0 10px;color:var(--ink);border:2px inset #aaa;height:100%;display:grid;place-items:center;background:#eaddcd}
-#menu{position:fixed;left:6px;bottom:calc(var(--tb) + 2px);width:260px;background:var(--body);border:2px solid var(--ink);
+.task.active{border-color:var(--ink);background:var(--mag);color:var(--on);box-shadow:inset 2px 2px 0 rgba(0,0,0,.2)}
+#clock{padding:0 10px;color:var(--text);border:2px inset #aaa;height:100%;display:grid;place-items:center;background:var(--clockbg)}
+#menu{position:fixed;left:6px;bottom:calc(var(--tb) + 2px);width:260px;background:var(--body);border:2px solid var(--text);
   box-shadow:6px 6px 0 var(--lime);z-index:90001;display:none}
 #menu.open{display:block}
-#menu .side{background:var(--mag);color:#fff;padding:6px 10px;font-size:26px;letter-spacing:2px;font-weight:bold;border-bottom:2px solid var(--ink)}
+#menu .side{background:var(--mag);color:var(--on);padding:6px 10px;font-size:26px;letter-spacing:2px;font-weight:bold;border-bottom:2px solid var(--ink)}
 #menu button{display:block;width:100%;text-align:left;padding:8px 14px;font-size:22px}
-#menu button:hover{background:var(--lime);color:#fff}
-#menu hr{border:0;border-top:2px solid var(--ink);margin:0}
+#menu button:hover{background:var(--lime);color:var(--on)}
+#menu hr{border:0;border-top:2px solid var(--text);margin:0}
 
 /* ===== MOBILE ===== */
 @media (max-width:700px){
@@ -122,11 +126,89 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   #tasks .task{min-width:70px}
 }
 @media (prefers-reduced-motion:reduce){#desktop{animation:none}}
+
+/* ===== WIDGETS (badge + weather) ===== */
+#widgets{position:absolute;top:12px;right:14px;width:250px;display:flex;flex-direction:column;gap:18px;z-index:5}
+.widget{background:var(--card);color:var(--text);border:2px solid var(--text);box-shadow:5px 5px 0 var(--mag)}
+.wbar{background:var(--lime);color:var(--on);padding:1px 8px;font-size:20px}
+.badge{transform:rotate(1.5deg)}
+.badge .slot{width:46px;height:9px;border:2px solid var(--text);border-radius:6px;margin:7px auto 2px;background:var(--bg)}
+.badge .row{display:flex;gap:10px;padding:8px 10px 10px}
+.pic{position:relative;flex:none;width:76px;height:76px;border:2px solid var(--text);
+  background:repeating-radial-gradient(circle at 30% 30%,var(--mag) 0 8px,var(--card) 9px 16px)}
+.pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.badge h3{font-size:32px;font-weight:700;line-height:1}
+.badge p{font-size:19px;line-height:1.05;margin-top:3px}
+.wx{display:flex;align-items:center;gap:10px;padding:8px 10px;min-height:76px}
+.wx svg{width:52px;height:52px;flex:none;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.wx .t{font-size:40px;line-height:1}.wx small{display:block;font-size:18px;line-height:1.05}
+
+/* ===== shared app bits ===== */
+button.card{text-align:left;color:var(--text);cursor:pointer}
+.btn{padding:5px 16px;border:2px solid var(--text);background:var(--lime);color:var(--on);box-shadow:3px 3px 0 var(--text)}
+.btn:active{box-shadow:none;transform:translate(3px,3px)}
+.field{width:100%;padding:8px;border:2px solid var(--text);background:var(--paper);color:var(--ink);font:inherit;margin:8px 0 12px}
+.pane{padding:16px}.pane h2{font-size:32px;font-weight:700;color:var(--lime)}.pane p{font-size:21px;max-width:50ch}
+.ok{margin-top:12px;padding:8px 10px;border:2px dashed var(--text);background:var(--card)}
+
+/* portfolio detail */
+.back{margin:12px 14px 0;padding:3px 12px;border:2px solid var(--text);background:var(--lime);color:var(--on);box-shadow:3px 3px 0 var(--text)}
+.detail{padding:6px 14px 16px}.detail h2{font-size:36px;font-weight:700;color:var(--lime)}
+.detail p{margin:10px 0;max-width:62ch;font-size:23px;line-height:1.2}
+.shot{display:block;width:100%;height:auto;border:2px solid var(--text);margin:0 0 14px;background:var(--card)}
+
+/* VMPC player: always a dark hardware look */
+.mpc{padding:12px;background:#232326;color:#e9e6dc;min-height:100%}
+.lcd{background:#b5c99a;color:#1d2a12;border:3px inset #6b7a58;padding:4px 8px;font-size:23px}
+.mq{overflow:hidden;white-space:nowrap}
+.mq span{display:inline-block;padding-left:100%;animation:marq 12s linear infinite}
+@keyframes marq{to{transform:translateX(-100%)}}
+.lcd .meta{display:flex;justify-content:space-between;font-size:19px;border-top:1px dashed #6b7a58;margin-top:3px}
+.pads{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.pad{height:62px;background:#3a3a40;border:2px solid #0e0e10;color:#fff;box-shadow:inset 0 -5px 0 rgba(0,0,0,.4)}
+.pad:active,.pad.on{background:var(--lime);color:var(--on)}
+.tl button{display:block;width:100%;text-align:left;padding:3px 6px;border-bottom:1px dashed #555}
+.tl button.on{background:#e9e6dc;color:#232326}
+
+/* terminal: always black + green */
+.term{min-height:100%;background:#000;color:#7CFF6B;padding:8px 10px;font-size:22px;line-height:1.1}
+.term pre{white-space:pre-wrap;word-break:break-word;font:inherit}
+.term .in{display:flex;gap:8px}
+.term input{flex:1;min-width:0;background:transparent;border:0;color:inherit;font:inherit;outline:none;caret-color:#7CFF6B}
+
+/* themes */
+.trow{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;text-align:left;border-bottom:1px dashed var(--line)}
+.trow:hover{background:var(--mag);color:var(--on)}
+.sw{display:flex;border:2px solid var(--text)}.sw i{width:16px;height:22px}
+.trow .cur{margin-left:auto}
+
+@media (max-width:700px){
+  #icons{grid-template-rows:repeat(auto-fill,96px);grid-auto-columns:84px}
+  .icon{width:84px;height:92px;font-size:17px}
+  #widgets{width:150px;gap:12px;right:8px}
+  .badge .intro,.wx small+small{display:none}.pic{width:52px;height:52px}.badge h3{font-size:26px}
+  .wx svg{width:36px;height:36px}.wx .t{font-size:30px}
+}
+@media (prefers-reduced-motion:reduce){.mq span{animation:none;padding-left:0}}
 </style>
 </head>
 <body>
 
-<div id="desktop"><nav id="icons" aria-label="Desktop"></nav></div>
+<div id="desktop"><nav id="icons" aria-label="Desktop"></nav>
+  <aside id="widgets" aria-label="Widgets">
+    <!-- Profile badge: swap profile-placeholder.jpg for your photo -->
+    <section class="widget badge" aria-label="Profile">
+      <div class="slot"></div>
+      <div class="row">
+        <div class="pic"><img src="profile-placeholder.jpg" alt="Zakaryae" onerror="this.remove()"></div>
+        <div><h3>Zakaryae</h3><p class="intro">Software Engineering Student @ 1337 | Former Creative Director</p></div>
+      </div>
+    </section>
+    <section class="widget" aria-label="Weather">
+      <div class="wbar">WEATHER.sys</div>
+      <div class="wx" id="wx" aria-live="polite">Locating...</div>
+    </section>
+  </aside></div>
 <div id="crt" aria-hidden="true"></div>
 
 <div id="menu" role="menu"></div>
@@ -134,7 +216,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   <button id="start" aria-haspopup="true" aria-expanded="false">
     <!-- Geometric 'Z' Logo -->
     <svg viewBox="0 0 32 32" aria-hidden="true">
-      <path fill="none" stroke="#fff" stroke-width="4" stroke-linecap="square" d="M6 8h20L6 24h20"/>
+      <path fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square" d="M6 8h20L6 24h20"/>
     </svg>
     <span>Start</span>
   </button>
@@ -148,10 +230,18 @@ const LINKS = {
   linkedin: 'https://www.linkedin.com/in/zakaryae-gourragui/'
 };
 
+// Portfolio data. `imgs` = case-study photos (first one is the card thumbnail).
+// `html` = trusted HTML for the full case study (written by you, not visitors).
 const WORK = [
-  {name:'Project One',   desc:'Short description of what it is.',  img:null, hue:280},
-  {name:'Project Two',   desc:'Tools used, what you learned.',     img:null, hue:320},
-  {name:'Project Three', desc:'A one-line pitch goes here.',       img:null, hue:80}
+  {name:'Project One', desc:'Short description of what it is.', hue:280,
+   imgs:['https://placehold.co/900x500?text=Project+One+1','https://placehold.co/900x500?text=Project+One+2'],
+   html:'<p>The problem, your role, and the result go here.</p><p>Add as many paragraphs as you like. <strong>HTML works.</strong></p>'},
+  {name:'Project Two', desc:'Tools used, what you learned.', hue:320,
+   imgs:['https://placehold.co/900x500?text=Project+Two+1','https://placehold.co/900x500?text=Project+Two+2','https://placehold.co/900x500?text=Project+Two+3'],
+   html:'<p>Explain the approach, the tools and what you would do differently.</p>'},
+  {name:'Project Three', desc:'A one-line pitch goes here.', hue:80,
+   imgs:['https://placehold.co/900x500?text=Project+Three+1'],
+   html:'<p>Write the full case study here.</p>'}
 ];
 
 const POSTS = [
@@ -183,22 +273,46 @@ const WIP = [
 
 const S = 'viewBox="0 0 44 44" fill="none" stroke-width="2.500"';
 const ICO = {
-  exe:`<svg ${S} stroke="#ff477e"><rect x="4" y="7" width="36" height="30" fill="#fff"/><rect x="4" y="7" width="36" height="7" fill="#ff477e"/><path d="M12 22l5 4-5 4M21 31h9"/></svg>`,
-  txt:`<svg ${S} stroke="#70d6ff"><path d="M9 4h19l7 7v29H9z" fill="#fff"/><path d="M15 18h14M15 24h14M15 30h9" stroke="#ff9f1c"/></svg>`,
-  dir:`<svg ${S} stroke="#ff9f1c"><path d="M4 12h14l3 4h19v22H4z" fill="#fff"/><path d="M4 20h36" stroke="#ff477e"/></svg>`,
-  lnk:`<svg ${S} stroke="#70d6ff"><rect x="6" y="6" width="32" height="32" fill="#fff"/><path d="M16 28L30 14M20 14h10v10" stroke="#ff477e"/></svg>`
+  exe:`<svg ${S} style="stroke:var(--lime)"><rect x="4" y="7" width="36" height="30" style="fill:var(--card)"/><rect x="4" y="7" width="36" height="7" style="fill:var(--lime)"/><path d="M12 22l5 4-5 4M21 31h9"/></svg>`,
+  txt:`<svg ${S} style="stroke:var(--mag)"><path d="M9 4h19l7 7v29H9z" style="fill:var(--card)"/><path d="M15 18h14M15 24h14M15 30h9" style="stroke:var(--purple)"/></svg>`,
+  dir:`<svg ${S} style="stroke:var(--purple)"><path d="M4 12h14l3 4h19v22H4z" style="fill:var(--card)"/><path d="M4 20h36" style="stroke:var(--lime)"/></svg>`,
+  lnk:`<svg ${S} style="stroke:var(--mag)"><rect x="6" y="6" width="32" height="32" style="fill:var(--card)"/><path d="M16 28L30 14M20 14h10v10" style="stroke:var(--lime)"/></svg>`,
+  vmpc:`<svg ${S} style="stroke:var(--text)"><rect x="4" y="6" width="36" height="32" style="fill:#232326"/><rect x="9" y="11" width="10" height="9" style="fill:var(--lime)"/><rect x="25" y="11" width="10" height="9" style="fill:var(--mag)"/><rect x="9" y="25" width="10" height="9" style="fill:var(--mag)"/><rect x="25" y="25" width="10" height="9" style="fill:var(--lime)"/></svg>`,
+  news:`<svg ${S} style="stroke:var(--text)"><rect x="5" y="10" width="34" height="24" style="fill:var(--card)"/><path d="M5 12l17 13 17-13" style="stroke:var(--mag)"/></svg>`,
+  term:`<svg ${S} stroke="#7CFF6B"><rect x="4" y="7" width="36" height="30" fill="#000"/><path d="M11 17l6 5-6 5M21 28h10"/></svg>`
 };
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 const APPS = {
-  portfolio:{ title:'Portfolio.exe', icon:'exe', w:620, h:440, html:() =>
-    `<div class="grid">${WORK.map(p => `
-      <article class="card">
-        <div class="thumb" style="background-image:${p.img ? `url('${esc(p.img)}')` :
-          `repeating-radial-gradient(circle at 30% 30%,hsl(${p.hue} 80% 60%) 0 10px,#fff 11px 20px)`}"></div>
-        <b>${esc(p.name)}</b><p>${esc(p.desc)}</p>
-      </article>`).join('')}</div>` },
+  portfolio:{ title:'Portfolio.exe', icon:'exe', w:620, h:440, html:() => '<div class="pf"></div>',
+    init(win){
+      const pf = win.querySelector('.pf'), box = win.querySelector('.content');
+      const thumb = p => p.imgs && p.imgs[0] ? `url('${esc(p.imgs[0])}')` :
+        `repeating-radial-gradient(circle at 30% 30%,hsl(${p.hue} 80% 60%) 0 10px,var(--card) 11px 20px)`;
+
+      // Grid view: one clickable card per project
+      const grid = () => {
+        pf.innerHTML = `<div class="grid">${WORK.map((p,i) => `
+          <button class="card" data-i="${i}">
+            <div class="thumb" style="background-image:${thumb(p)}"></div>
+            <b>${esc(p.name)}</b><p>${esc(p.desc)}</p>
+          </button>`).join('')}</div>`;
+        pf.querySelectorAll('.card').forEach(c => c.addEventListener('click', () => detail(+c.dataset.i)));
+        box.scrollTop = 0;
+      };
+
+      // Detailed view: title, full description, images in order
+      const detail = i => {
+        const p = WORK[i];
+        pf.innerHTML = `<button class="back">&lt;- Back to Grid</button>
+          <article class="detail"><h2>${esc(p.name)}</h2>${p.html}
+          ${(p.imgs||[]).map((u,n) => `<img class="shot" loading="lazy" src="${esc(u)}" alt="${esc(p.name)} photo ${n+1}">`).join('')}</article>`;
+        pf.querySelector('.back').addEventListener('click', grid);
+        box.scrollTop = 0;
+      };
+      grid();
+    } },
 
   blog:{ title:'Blog.txt - Editor', icon:'txt', w:700, h:440, html:() =>
     `<div class="col"><div class="menu"><span>File</span><span>Edit</span><span>Search</span><span>Help</span></div>
@@ -226,11 +340,15 @@ const APPS = {
 };
 
 const ICONS = [
-  {label:'Portfolio.exe',          icon:'exe', app:'portfolio'},
-  {label:'Blog.txt',               icon:'txt', app:'blog'},
-  {label:'Unfinished_Projects.dir',icon:'dir', app:'wip'},
-  {label:'GitHub.lnk',             icon:'lnk', href:LINKS.github},
-  {label:'LinkedIn.lnk',           icon:'lnk', href:LINKS.linkedin}
+  {label:'Portfolio.exe',           icon:'exe',  app:'portfolio'},
+  {label:'Blog.txt',                icon:'txt',  app:'blog'},
+  {label:'Unfinished_Projects.dir', icon:'dir',  app:'wip'},
+  {label:'VMPC.exe',                icon:'vmpc', app:'vmpc'},
+  {label:'Terminal.exe',            icon:'term', app:'term'},
+  {label:'Newsletter.exe',          icon:'news', app:'news'},
+  {label:'Themes.dir',              icon:'dir',  app:'themes'},
+  {label:'GitHub.lnk',              icon:'lnk',  href:LINKS.github},
+  {label:'LinkedIn.lnk',            icon:'lnk',  href:LINKS.linkedin}
 ];
 
 const desktop = document.getElementById('desktop');
@@ -298,6 +416,7 @@ function minimize(id){
 }
 function closeWin(id){
   const w = wins[id]; if (!w) return;
+  if (APPS[id].onClose) APPS[id].onClose();   // let apps clean up (e.g. stop audio)
   w.el.remove(); w.btn.remove(); delete wins[id];
   const vis = Object.keys(wins).filter(k => !wins[k].el.classList.contains('min'))
     .sort((a,b) => wins[b].el.style.zIndex - wins[a].el.style.zIndex);
@@ -367,6 +486,213 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(fals
 const clock = document.getElementById('clock');
 const tick = () => clock.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 tick(); setInterval(tick, 20000);
+
+/* =========================================================
+   VMPC.exe: music player (placeholder URLs: drop mp3s in /audio)
+   ========================================================= */
+const TRACKS = [
+  {title:'Aruarian Dance', url:'audio/aruarian-dance.mp3'},
+  {title:'Feather',        url:'audio/feather.mp3'},
+  {title:'Luv(sic) pt3',   url:'audio/luvsic-pt3.mp3'}
+];
+const audio = new Audio();          // lives outside the window so music survives minimize
+audio.preload = 'none';
+let trackIdx = 0;
+const fmt = t => isFinite(t) ? Math.floor(t/60) + ':' + String(Math.floor(t%60)).padStart(2,'0') : '0:00';
+audio.src = TRACKS[0].url;
+
+Object.assign(APPS, {
+  vmpc:{ title:'VMPC.exe', icon:'vmpc', w:380, h:360,
+    html:() => `<div class="mpc">
+      <div class="lcd"><div class="mq"><span></span></div>
+        <div class="meta"><span class="no"></span><span class="tm">0:00 / 0:00</span></div></div>
+      <div class="pads"><button class="pad" data-a="play">PLAY</button><button class="pad" data-a="pause">PAUSE</button><button class="pad" data-a="next">NEXT</button></div>
+      <div class="tl">${TRACKS.map((t,i) => `<button data-i="${i}">${String(i+1).padStart(2,'0')} ${esc(t.title)}</button>`).join('')}</div>
+    </div>`,
+    init(win){
+      const $ = q => win.querySelector(q), padPlay = $('[data-a=play]');
+      const note = msg => { $('.mq span').textContent = msg; };
+      const draw = () => {
+        note(`Now Playing: Nujabes - ${TRACKS[trackIdx].title}`);
+        $('.no').textContent = `TRK ${trackIdx+1}/${TRACKS.length}`;
+        win.querySelectorAll('.tl button').forEach((b,i) => b.classList.toggle('on', i === trackIdx));
+        padPlay.classList.toggle('on', !audio.paused);
+      };
+      const play = () => audio.play().then(draw).catch(() => note('Audio file not found. Add your mp3 to /audio'));
+      const load = i => { trackIdx = (i + TRACKS.length) % TRACKS.length; audio.src = TRACKS[trackIdx].url; draw(); };
+      audio.ontimeupdate = () => $('.tm').textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+      audio.onended = () => { load(trackIdx + 1); play(); };       // auto-advance
+      audio.onerror = () => note('Audio file not found. Add your mp3 to /audio');
+      padPlay.addEventListener('click', play);
+      $('[data-a=pause]').addEventListener('click', () => { audio.pause(); draw(); });
+      $('[data-a=next]').addEventListener('click', () => { load(trackIdx + 1); play(); });
+      win.querySelectorAll('.tl button').forEach(b => b.addEventListener('click', () => { load(+b.dataset.i); play(); }));
+      draw();
+    },
+    onClose(){ audio.pause(); audio.ontimeupdate = audio.onended = audio.onerror = null; } },
+
+/* =========================================================
+   Newsletter.exe (no backend yet: front-end only)
+   ========================================================= */
+  news:{ title:'Newsletter.exe', icon:'news', w:420, h:300,
+    html:() => `<form class="pane" novalidate>
+      <h2>Subscribe</h2><p>Occasional notes on C, low-level mechanics and building things.</p>
+      <label for="nl-email">Email address</label>
+      <input id="nl-email" class="field" type="email" required autocomplete="email" placeholder="you@example.com">
+      <button class="btn" type="submit">Subscribe</button>
+      <div class="ok" role="status" hidden></div></form>`,
+    init(win){
+      const form = win.querySelector('form'), input = win.querySelector('input'), ok = win.querySelector('.ok');
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        if (!input.checkValidity()) { ok.hidden = false; ok.textContent = 'Please enter a valid email address.'; return; }
+        // TODO: send input.value to your backend or form service here
+        input.value = '';
+        ok.hidden = false;
+        ok.textContent = 'Thanks for subscribing! Added to the database.';
+      });
+    } },
+
+/* =========================================================
+   Terminal.exe
+   ========================================================= */
+  term:{ title:'Terminal.exe', icon:'term', w:600, h:380,
+    html:() => `<div class="term"><pre class="out"></pre>
+      <label class="in"><span class="ps">zakaryae@1337:~$</span><input spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Terminal input"></label></div>`,
+    init(win){
+      const out = win.querySelector('.out'), input = win.querySelector('input'), box = win.querySelector('.content');
+      const PS = 'zakaryae@1337:~$ ';
+      const hist = []; let h = 0;
+      const print = t => { out.textContent += t + '\n'; box.scrollTop = box.scrollHeight; };
+      const COMMANDS = {
+        help:   () => 'Available commands:\n  help          list commands\n  whoami        short bio\n  ls            list files\n  cat <file>    print a file (try: cat resume.txt)\n  clear         clear the screen',
+        whoami: () => 'Zakaryae. Software engineering student at 1337 (Morocco), former creative director.\nTrading brand strategy for low-level C and first-principles problem solving.',
+        ls:     () => 'projects/  resume.txt',
+        cat:    a => !a[0] ? 'usage: cat <file>' : a[0] === 'resume.txt' ? RESUME : `cat: ${a[0]}: ${a[0] === 'projects' ? 'Is a directory' : 'No such file or directory'}`
+      };
+      const RESUME = [
+        '============================================',
+        '  ZAKARYAE // RESUME',
+        '============================================',
+        '  Role     Software Engineering Student @ 1337',
+        '  Before   Creative Director (marketing, brand)',
+        '  Focus    C, Unix, low-level programming',
+        '--------------------------------------------',
+        '  EDUCATION',
+        '   > 1337 Coding School, Morocco (Common Core)',
+        '  PROJECTS',
+        '   > libft: the C standard library, rebuilt',
+        '  EXPERIENCE',
+        '   > Creative Director  [edit me in the JS]',
+        '  CONTACT',
+        '   > ' + LINKS.github.replace('https://', ''),
+        '============================================'
+      ].join('\n');
+      print('Welcome to zakaryae-os. Type "help" to begin.');
+
+      input.addEventListener('keydown', e => {
+        if (e.key === 'ArrowUp' && hist.length)  { h = Math.max(0, h - 1); input.value = hist[h]; e.preventDefault(); }
+        if (e.key === 'ArrowDown' && hist.length) { h = Math.min(hist.length, h + 1); input.value = hist[h] || ''; e.preventDefault(); }
+        if (e.key !== 'Enter') return;
+        const line = input.value.trim(); input.value = '';
+        print(PS + line);
+        if (!line) return;
+        hist.push(line); h = hist.length;
+        const [cmd, ...args] = line.split(/\s+/);
+        if (cmd === 'clear') { out.textContent = ''; return; }
+        print(COMMANDS[cmd] ? COMMANDS[cmd](args) : `${cmd}: command not found. Type "help".`);
+      });
+      win.querySelector('.term').addEventListener('click', () => { if (!getSelection().toString()) input.focus(); });
+      if (!isMobile()) input.focus();
+    } }
+});
+
+/* =========================================================
+   Themes.dir: overwrite :root variables at runtime
+   ========================================================= */
+const THEMES = {
+  Joyful_Hippie:{ note:'Tie-dye gradient, warm colours', vars:{
+    '--bg':'#fbe9d0','--lime':'#ff477e','--mag':'#70d6ff','--purple':'#ff9f1c','--deep':'#ffd166',
+    '--paper':'#fffdf7','--ink':'#2b1a1c','--body':'#f4ebd8','--text':'#2b1a1c',
+    '--on':'#fff','--baroff':'#b8a99a','--tbbg':'#dcd3c6','--card':'#fff','--panel':'#fefefe','--clockbg':'#eaddcd',
+    '--strip':'#f4ebd8','--line':'#ddd','--h2':'#ff477e','--stuck':'#ff9f1c','--idea':'#1982c4',
+    '--selbg':'rgba(255,255,255,.4)','--ish':'1px 1px 0 #fff','--crt':'rgba(0,0,0,.08)','--vig':'linear-gradient(transparent,transparent)',
+    '--deskbg':'radial-gradient(circle at 0% 0%,#ff5e5b,#ffca3a,#8ac926,#1982c4,#6a4c93)','--desksize':'600% 600%','--deskanim':'drift' }},
+  Dark_NeoNoir:{ note:'Pitch black, acid lime, magenta', vars:{
+    '--bg':'#151515','--lime':'#C6F22D','--mag':'#FF2BD6','--purple':'#3b0a63','--deep':'#1a0630',
+    '--paper':'#F4F2E9','--ink':'#151515','--body':'#1b1b1b','--text':'#F4F2E9',
+    '--on':'#151515','--baroff':'#6d8a14','--tbbg':'#0c0c0c','--card':'#111','--panel':'#111','--clockbg':'#0c0c0c',
+    '--strip':'#F4F2E9','--line':'#3a3a3a','--h2':'#151515','--stuck':'#FF2BD6','--idea':'#8fb7ff',
+    '--selbg':'rgba(198,242,45,.14)','--ish':'none','--crt':'rgba(0,0,0,.22)',
+    '--vig':'radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.45))',
+    '--deskbg':'#151515','--desksize':'auto','--deskanim':'none' }}
+};
+let currentTheme = 'Joyful_Hippie';
+function applyTheme(name){
+  if (!THEMES[name]) return;
+  Object.entries(THEMES[name].vars).forEach(([k,v]) => document.documentElement.style.setProperty(k, v));
+  currentTheme = name;
+  try { localStorage.setItem('zk-theme', name); } catch(e) {}
+}
+Object.assign(APPS, {
+  themes:{ title:'C:\\Themes', icon:'dir', w:420, h:240,
+    html:() => `<div class="col"><div class="path">C:\\Themes\\</div><div class="content">${Object.entries(THEMES).map(([k,t]) =>
+      `<button class="trow" data-k="${k}"><span class="sw"><i style="background:${t.vars['--bg']}"></i><i style="background:${t.vars['--lime']}"></i><i style="background:${t.vars['--mag']}"></i></span>
+       <span>${k}.theme<br><small>${esc(t.note)}</small></span><span class="cur"></span></button>`).join('')}</div>
+      <div class="status">Click a .theme file to apply it</div></div>`,
+    init(win){
+      const rows = win.querySelectorAll('.trow'), st = win.querySelector('.status');
+      const mark = () => rows.forEach(r => r.querySelector('.cur').textContent = r.dataset.k === currentTheme ? '[active]' : '');
+      rows.forEach(r => r.addEventListener('click', () => { applyTheme(r.dataset.k); mark(); st.textContent = `Applied ${r.dataset.k}.theme`; }));
+      mark();
+    } }
+});
+try { applyTheme(localStorage.getItem('zk-theme') || currentTheme); } catch(e) { applyTheme(currentTheme); }
+
+/* =========================================================
+   Weather widget (Open-Meteo, no API key)
+   ========================================================= */
+const RABAT = {lat:34.0209, lon:-6.8416, label:'Rabat, Morocco'};
+// Resolve to visitor coordinates, or fall back to Rabat if denied/unavailable
+const locate = () => new Promise(res => {
+  if (!navigator.geolocation) return res(RABAT);
+  navigator.geolocation.getCurrentPosition(
+    p => res({lat:p.coords.latitude, lon:p.coords.longitude, label:'Your location'}),
+    () => res(RABAT), {timeout:6000, maximumAge:600000});
+});
+// WMO weather code -> {text, kind}
+function wxInfo(c, day){
+  if (c === 0) return {text:'Clear sky', kind: day === 0 ? 'moon' : 'sun'};
+  if (c <= 2)  return {text:'Partly cloudy', kind:'cloud'};
+  if (c === 3) return {text:'Overcast', kind:'cloud'};
+  if (c === 45 || c === 48) return {text:'Fog', kind:'fog'};
+  if (c >= 51 && c <= 57) return {text:'Drizzle', kind:'rain'};
+  if ((c >= 61 && c <= 67) || (c >= 80 && c <= 82)) return {text:'Rain', kind:'rain'};
+  if ((c >= 71 && c <= 77) || c === 85 || c === 86) return {text:'Snow', kind:'snow'};
+  if (c >= 95) return {text:'Thunderstorm', kind:'storm'};
+  return {text:'Unknown', kind:'cloud'};
+}
+function wxIcon(k){
+  const cloud = '<path d="M14 32h20a7 7 0 0 0 0-14 10 10 0 0 0-19 2A6 6 0 0 0 14 32z"/>';
+  const g = {
+    sun:`<g style="stroke:var(--lime)"><circle cx="24" cy="24" r="8"/><path d="M24 6v6M24 36v6M6 24h6M36 24h6M11 11l4 4M33 33l4 4M37 11l-4 4M15 33l-4 4"/></g>`,
+    moon:`<path style="stroke:var(--lime)" d="M30 8a16 16 0 1 0 10 22A14 14 0 0 1 30 8z"/>`,
+    cloud:cloud, fog:'<path d="M8 16h32M12 24h28M8 32h32"/>',
+    rain:cloud + '<path d="M16 38l-2 5M25 38l-2 5M34 38l-2 5"/>',
+    snow:cloud + '<path d="M16 40h.1M25 42h.1M34 40h.1"/>',
+    storm:cloud + '<path d="M26 33l-5 7h6l-3 7"/>'
+  };
+  return `<svg viewBox="0 0 48 48" style="stroke:var(--text)" aria-hidden="true">${g[k]}</svg>`;
+}
+(async function loadWeather(){
+  const el = document.getElementById('wx'), loc = await locate();
+  try {
+    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat.toFixed(3)}&longitude=${loc.lon.toFixed(3)}&current_weather=true`);
+    if (!r.ok) throw new Error(r.status);
+    const c = (await r.json()).current_weather, w = wxInfo(c.weathercode, c.is_day);
+    el.innerHTML = `${wxIcon(w.kind)}<div><div class="t">${Math.round(c.temperature)}&deg;C</div><small>${w.text}</small><small>${esc(loc.label)}, wind ${Math.round(c.windspeed)} km/h</small></div>`;
+  } catch(e) { el.textContent = 'Weather unavailable right now.'; }
+})();
 
 openApp('portfolio');
 </script>
