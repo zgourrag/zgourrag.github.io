@@ -1,4 +1,60 @@
 {
+  "siteSettings": {
+    "siteTitle": "zakaryae-os // portfolio",
+    "profileName": "Zakaryae",
+    "profileIntro": "Software Engineering Student @ 1337 | Former Creative Director",
+    "profileImage": "",
+    "cv": "ZAKARYAE\nCreative technologist -> software engineer\n\n[BEFORE] CREATIVE DIRECTION\nDigital marketing, brand identity and campaigns. I shaped the facade of products, from the first idea to the last pixel.\n\n[NOW] 1337, MOROCCO\nStudying software engineering. C, pointers, memory management and data structures. Rebuilding libft from scratch and learning how code meets hardware.\n\n[PRINCIPLE]\nStrip the abstraction. Understand allocation, ownership and failure modes first.",
+    "quoteText": "The map is not the territory.",
+    "quoteAuthor": "Alfred Korzybski",
+    "email": "hello@zakaryae.me",
+    "github": "https://github.com/zgourrag",
+    "linkedin": "https://www.linkedin.com/in/zakaryae-gourragui/",
+    "instagram": "https://www.instagram.com/zakaryve/",
+    "statusIdle": "ready. hover an icon for a hint.",
+    "statusTips": [
+      {
+        "label": "zakaryae.txt",
+        "text": "[ 12KB ] — Read the source code of my career"
+      },
+      {
+        "label": "Portfolio.exe",
+        "text": "[ CASES ] — Case studies. Click responsibly."
+      },
+      {
+        "label": "Blog.txt",
+        "text": "[ POSTS ] — Thoughts, unbuffered."
+      },
+      {
+        "label": "Projects.dir",
+        "text": "[ DIR ] — Everything I started. Some even finished."
+      },
+      {
+        "label": "Links.dir",
+        "text": "[ DIR ] — Portals to the outside world."
+      },
+      {
+        "label": "VMPC.exe",
+        "text": "[ MP3 ] — Boom-bap for debugging sessions."
+      },
+      {
+        "label": "Terminal.exe",
+        "text": "[ SH ] — Type help. It will not judge you."
+      },
+      {
+        "label": "Broadcast_Relay.exe",
+        "text": "[ MAIL ] — Join the signal."
+      },
+      {
+        "label": "Wall.exe",
+        "text": "[ WALL ] — Leave a mark, with coordinates."
+      },
+      {
+        "label": "Snake.exe",
+        "text": "[ GAME ] — Do not eat yourself."
+      }
+    ]
+  },
   "work": [
     {
       "title": "Project One",

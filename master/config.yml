@@ -22,6 +22,32 @@ collections:
         label: Portfolio, Blog and Unfinished Projects
         file: data.json
         fields:
+          - label: Site settings
+            name: siteSettings
+            widget: object
+            collapsed: false
+            fields:
+              - { label: Browser tab title, name: siteTitle, widget: string }
+              - { label: Badge name, name: profileName, widget: string }
+              - { label: Badge intro line, name: profileIntro, widget: string }
+              - { label: Profile picture (upload or paste a URL), name: profileImage, widget: image, required: false }
+              - { label: zakaryae.txt (full CV text), name: cv, widget: text, hint: "Plain text. Line breaks are kept." }
+              - { label: Desktop quote, name: quoteText, widget: string }
+              - { label: Quote author, name: quoteAuthor, widget: string }
+              - { label: Email, name: email, widget: string, required: false }
+              - { label: GitHub URL, name: github, widget: string }
+              - { label: LinkedIn URL, name: linkedin, widget: string }
+              - { label: Instagram URL, name: instagram, widget: string }
+              - { label: Status bar idle text, name: statusIdle, widget: string }
+              - label: Status bar hints (shown when hovering an icon)
+                name: statusTips
+                widget: list
+                required: false
+                summary: "{{fields.label}}"
+                fields:
+                  - { label: Icon label (exactly as on the desktop, e.g. Wall.exe), name: label, widget: string }
+                  - { label: Hint text, name: text, widget: string }
+
           - label: Portfolio projects
             name: work
             widget: list

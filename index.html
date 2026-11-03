@@ -27,7 +27,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 :focus-visible{outline:2px dashed var(--mag);outline-offset:2px}
 
 /* ===== DESKTOP BACKGROUND: Tie-dye fluid gradient ===== */
-#desktop{position:fixed;inset:0 0 var(--tb) 0;overflow:hidden;
+#desktop{position:fixed;inset:0 0 calc(var(--tb) + 24px) 0;z-index:1;overflow:hidden;
   background:var(--deskbg);background-size:var(--desksize);
   animation:var(--deskanim) 20s ease-in-out infinite alternate}
 @keyframes drift{
@@ -223,8 +223,11 @@ button.card{text-align:left;color:var(--text);cursor:pointer}
 @media (max-width:700px){#sticker{width:150px;right:10px;bottom:14px}#sticker .note{font-size:19px;padding:18px 10px 24px}}
 @media (prefers-reduced-motion:reduce){#gate h1{animation:none}#rain{display:none}}
 
-/* ===== stacking order: rain < sticker < icons < widgets < windows < taskbar < menu < gate < crt ===== */
-#rain{z-index:0}#sticker{z-index:1}#icons{z-index:2}
+/* ===== stacking order (inside #desktop): rain 0 < sticker 1 < icons 2 < widgets 6 < windows 11+ ; outside: statusbar 89999 < taskbar 90000 < menu 90001 < gate 99998 < crt 99999 ===== */
+#rain{z-index:0}#sticker{z-index:1}#icons{z-index:2}#widgets{z-index:6}
+#statusbar{position:fixed;left:0;right:0;bottom:var(--tb);height:24px;line-height:24px;padding:0 10px;background:var(--strip);color:var(--ink);border-top:2px solid var(--ink);z-index:89999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:20px}
+#themebtn{height:100%;padding:0 10px;border:2px solid var(--ink);background:var(--body);white-space:nowrap}
+#themebtn:hover,#showdesk:hover{background:var(--lime);color:var(--on)}
 /* ===== WALL ===== */
 .wf{padding:10px 12px;background:var(--strip);color:var(--ink);border-bottom:2px solid var(--ink)}
 .wf .field{margin:6px 0 8px;resize:none}.wf small{font-size:17px;opacity:.8}
@@ -245,12 +248,10 @@ button.card{text-align:left;color:var(--text);cursor:pointer}
 .dpad button:active{background:var(--lime);color:var(--on)}
 .gname{font:inherit;font-size:32px;text-align:center;width:min(90vw,420px);padding:6px 12px;background:#000;color:var(--lime);border:2px solid var(--lime)}
 .tag.completed{color:#2e9e3a}.tag.wip{color:#c77700}.tag.segfault{color:#d11}
-#relay{position:absolute;right:14px;bottom:14px;width:270px;z-index:5}
-#relay form{padding:8px 10px}#relay .field{margin:4px 0 6px;padding:4px 8px}#relay .ok{margin-top:6px;padding:4px 8px}
 #showdesk{width:40px;height:100%;border:2px solid var(--ink);background:var(--body);font-size:20px}
 .rec{display:flex;gap:6px;margin:8px 0;align-items:center}.rec .field{margin:0}
 .lb{margin-top:8px;font-size:20px;min-width:200px}.lb div{display:flex;justify-content:space-between;border-bottom:1px dashed #777}
-@media(max-width:700px){#relay{display:none}}
+@media(max-width:700px){#themename{display:none}#statusbar{font-size:17px}}
 </style>
 </head>
 <body>
@@ -263,26 +264,23 @@ button.card{text-align:left;color:var(--text);cursor:pointer}
 <div id="desktop" inert><div id="rain" aria-hidden="true"></div>
   <nav id="icons" aria-label="Desktop"></nav>
   <!-- Quote sticker: edit the text below -->
-  <aside id="sticker" aria-label="Quote"><div class="note"><p>The map is not the territory.</p><cite>Alfred Korzybski</cite></div></aside>
+  <aside id="sticker" aria-label="Quote"><div class="note"><p id="qtext">The map is not the territory.</p><cite id="qcite">Alfred Korzybski</cite></div></aside>
   <aside id="widgets" aria-label="Widgets">
     <!-- Profile badge: swap profile-placeholder.jpg for your photo -->
     <section class="widget badge" aria-label="Profile">
       <div class="slot"></div>
       <div class="row">
-        <div class="pic"><img src="profile-placeholder.jpg" alt="Zakaryae" onerror="this.remove()"></div>
-        <div><h3>Zakaryae</h3><p class="intro">Software Engineering Student @ 1337 | Former Creative Director</p></div>
+        <div class="pic"><img id="profimg" alt="" hidden></div>
+        <div><h3 id="pname">Zakaryae</h3><p class="intro" id="pintro">Software Engineering Student @ 1337 | Former Creative Director</p></div>
       </div>
     </section>
     <section class="widget" aria-label="Weather">
       <div class="wbar">WEATHER.sys</div>
       <div class="wx" id="wx" aria-live="polite">Locating...</div>
     </section>
-  </aside>
-  <aside id="relay" class="widget" aria-label="Broadcast_Relay">
-    <div class="wbar">Broadcast_Relay</div>
-    <form novalidate><input class="field" type="email" required autocomplete="email" placeholder="you@example.com" aria-label="Email address"><button class="btn" type="submit">Subscribe</button><div class="ok" role="status" hidden></div></form>
   </aside></div>
 <div id="crt" aria-hidden="true"></div>
+<div id="statusbar" aria-live="polite">ready.</div>
 
 <div id="menu" role="menu"></div>
 <div id="taskbar" inert>
@@ -294,6 +292,7 @@ button.card{text-align:left;color:var(--text);cursor:pointer}
     <span>Start</span>
   </button>
   <div id="tasks" aria-label="Open windows"></div>
+  <button id="themebtn" type="button" title="Switch theme" aria-label="Switch theme">&#127912; <span id="themename"></span></button>
   <button id="showdesk" type="button" title="Show Desktop" aria-label="Show Desktop">[_]</button>
   <div id="clock">--:--</div>
 </div>
@@ -306,13 +305,25 @@ const LINKS = {
 };
 
 // Content lives in data.json (edited through /master). Loaded once; apps read these on open.
-let WORK = [], POSTS = [], WIP = [];
+let WORK = [], POSTS = [], WIP = [], TIPS = {}, IDLE = 'ready.';
+function applySettings(st){
+  const $i = id => document.getElementById(id), set = (id, v) => { const e = $i(id); if (e && v) e.textContent = v; };
+  if (st.siteTitle) document.title = st.siteTitle;
+  ['github','linkedin','instagram','email'].forEach(k => { if (st[k]) LINKS[k] = st[k]; });
+  if (st.cv) CV = st.cv;
+  set('pname', st.profileName); set('pintro', st.profileIntro); set('qtext', st.quoteText); set('qcite', st.quoteAuthor);
+  const im = $i('profimg');
+  if (im && st.profileImage) { im.onload = () => { im.hidden = false; }; im.onerror = () => { im.hidden = true; }; im.src = st.profileImage; }
+  if (st.statusIdle) IDLE = st.statusIdle;
+  (st.statusTips || []).forEach(t => { if (t && t.label) TIPS[t.label] = t.text; });
+}
 const dataReady = fetch('data.json', {cache:'no-cache'})
   .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
   .then(d => {
     WORK = d.work || [];
     POSTS = (d.posts || []).slice().sort((a,b) => String(b.date).localeCompare(String(a.date)));   // newest first
     WIP = d.wip || [];
+    applySettings(d.siteSettings || {});
   })
   .catch(err => console.warn('data.json could not be loaded (opening index.html from file:// does this):', err));
 
@@ -331,6 +342,8 @@ const ICO = {
   snake:`<svg ${S} style="stroke:var(--lime)"><rect x="4" y="6" width="36" height="32" style="fill:var(--card)"/><path d="M18 14l12 8-12 8z" style="fill:var(--lime)"/></svg>`
 };
 
+const emo = e => `<svg viewBox="0 0 44 44" aria-hidden="true"><text x="22" y="34" font-size="34" text-anchor="middle">${e}</text></svg>`;
+Object.assign(ICO, {exe:emo('💼'), txt:emo('📝'), dir:emo('🗂️'), lnk:emo('🔗'), links:emo('🔗'), blog:emo('📓'), vmpc:emo('🎧'), news:emo('📬'), term:emo('💻'), wall:emo('🧱'), snake:emo('🐍')});
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 // Text helpers: CMS text uses blank lines between paragraphs; a paragraph that starts with "<" is kept as raw HTML
@@ -338,8 +351,7 @@ const paras = b => Array.isArray(b) ? b : String(b || '').split(/\n{2,}/).map(t 
 const rich  = t => paras(t).map(x => x.startsWith('<') ? x : `<p>${esc(x)}</p>`).join('');
 
 const tagOf = st => { const x = String(st || '').toLowerCase(); return x.includes('segfault') ? {c:'segfault', t:'[SEGFAULT]'} : (x.includes('progress') || x === 'wip') ? {c:'wip', t:'[WIP]'} : {c:'completed', t:'[COMPLETED]'}; };
-const lbRows = b => [['ptr_master',42],['malloc_mo',31],['segfault_sam',18],[window.SESSION || 'Guest', b]].sort((x,y) => y[1] - x[1]).map((r,i) => `<div><span>${i+1}. ${esc(r[0])}</span><span>${r[1]}</span></div>`).join('');
-const CV = `ZAKARYAE
+let CV = `ZAKARYAE
 Creative technologist -> software engineer
 
 [BEFORE] CREATIVE DIRECTION
@@ -380,7 +392,7 @@ const APPS = {
       grid();
     } },
 
-  blog:{ title:'Blog.txt - Editor', icon:'txt', w:700, h:440, html:() =>
+  blog:{ title:'Blog.txt - Editor', icon:'blog', w:700, h:440, html:() =>
     `<div class="col"><div class="menu"><span>File</span><span>Edit</span><span>Search</span><span>Help</span></div>
      <div class="editor"><div class="posts">${POSTS.map((p,i) =>
        `<button data-i="${i}" class="${i?'':'on'}">${esc(p.title)}<small>${esc(p.date)}</small></button>`).join('')}</div>
@@ -408,15 +420,14 @@ const APPS = {
 const ICONS = [
   {label:'zakaryae.txt',            icon:'txt',  app:'about'},
   {label:'Portfolio.exe',           icon:'exe',  app:'portfolio'},
-  {label:'Blog.txt',                icon:'txt',  app:'blog'},
+  {label:'Blog.txt',                icon:'blog',  app:'blog'},
   {label:'Projects.dir'          , icon:'dir',  app:'wip'},
   {label:'VMPC.exe',                icon:'vmpc', app:'vmpc'},
   {label:'Terminal.exe',            icon:'term', app:'term'},
-  {label:'Newsletter.exe',          icon:'news', app:'news'},
+  {label:'Broadcast_Relay.exe',     icon:'news', app:'news'},
   {label:'Wall.exe',                icon:'wall', app:'wall'},
   {label:'Snake.exe',               icon:'snake',app:'snake'},
-  {label:'Themes.dir',              icon:'dir',  app:'themes'},
-  {label:'Links.dir',               icon:'dir',  app:'links'}
+  {label:'Links.dir',               icon:'links',  app:'links'}
 ];
 
 const desktop = document.getElementById('desktop');
@@ -571,6 +582,7 @@ ICONS.forEach(it => {
   const b = document.createElement('button');
   b.className = 'icon';
   b.innerHTML = ICO[it.icon] + `<span>${esc(it.label)}</span>`;
+  b.dataset.tip = it.label;
   makeIconDraggable(b);
   // Second click opens (first click selects); single tap opens on mobile
   b.addEventListener('click', e => {
@@ -589,11 +601,12 @@ desktop.addEventListener('click', () => iconsEl.querySelectorAll('.sel').forEach
 const menu = document.getElementById('menu'), startBtn = document.getElementById('start');
 menu.innerHTML = '<div class="side">ZAKARYAE</div>' +
   ICONS.map((it,i) => `<button role="menuitem" data-i="${i}">${esc(it.label)}</button>`).join('') +
-  '<hr><button role="menuitem" data-off="1">Shut down...</button>';
+  '<hr><button role="menuitem" data-switch="1">Switch user...</button><button role="menuitem" data-off="1">Shut down...</button>';
 const setMenu = open => { menu.classList.toggle('open', open); startBtn.setAttribute('aria-expanded', open); };
 startBtn.addEventListener('click', e => { e.stopPropagation(); setMenu(!menu.classList.contains('open')); });
 menu.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.switch) { try { localStorage.removeItem('zk-name'); } catch(x) {} location.reload(); return; }
   if (b.dataset.off) Object.keys(wins).forEach(closeWin); else activate(ICONS[+b.dataset.i]);
   setMenu(false);
 });
@@ -607,13 +620,16 @@ tick(); setInterval(tick, 20000);
 /* =========================================================
    VMPC.exe: music player
    ========================================================= */
+const AR = 'https://archive.org/download/DWK237/Tony_Mahoney_-_';
 const TRACKS = [
-  // TEMP test streams (SoundHelix demo songs). Swap each url for your own file, e.g. 'audio/feather.mp3'.
-  {title:'Aruarian Dance', url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'},
-  {title:'Feather',        url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'},
-  {title:'Luv(sic) pt3',   url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'}
+  // Real MP3s on archive.org (Dusted Wax Kingdom netlabel, CC BY-NC-ND 3.0). Jazzy instrumental hip-hop in the Nujabes spirit.
+  // To use your own file, replace url with e.g. 'audio/track.mp3'.
+  {artist:'Tony Mahoney', title:'Dark Blue',     url:AR + '02_-_Dark_Blue.mp3'},
+  {artist:'Tony Mahoney', title:'Peace',         url:AR + '03_-_Peace.mp3'},
+  {artist:'Tony Mahoney', title:'Easy To Slip',  url:AR + '04_-_Easy_To_Slip.mp3'},
+  {artist:'Tony Mahoney', title:'Moody Keys',    url:AR + '14_-_Moody_Keys.mp3'}
 ];
-const audio = new Audio();          // lives outside the window so music survives minimize
+const audio = new Audio(); audio.preload = 'none';          // lives outside the window so music survives minimize
 audio.preload = 'none';
 let trackIdx = 0;
 const fmt = t => isFinite(t) ? Math.floor(t/60) + ':' + String(Math.floor(t%60)).padStart(2,'0') : '0:00';
@@ -632,7 +648,7 @@ Object.assign(APPS, {
       const $ = q => win.querySelector(q), padPlay = $('[data-a=play]');
       const note = msg => { $('.mq span').textContent = msg; };
       const draw = () => {
-        note(`Now Playing: Nujabes - ${TRACKS[trackIdx].title}`);
+        note(`Now Playing: ${TRACKS[trackIdx].artist} - ${TRACKS[trackIdx].title}  ///  Dusted Wax Kingdom, CC BY-NC-ND`);
         $('.no').textContent = `TRK ${trackIdx+1}/${TRACKS.length}`;
         win.querySelectorAll('.tl button').forEach((b,i) => b.classList.toggle('on', i === trackIdx));
         padPlay.classList.toggle('on', !audio.paused);
@@ -669,7 +685,7 @@ Object.assign(APPS, {
 /* =========================================================
    Newsletter.exe (no backend yet: front-end only)
    ========================================================= */
-  news:{ title:'Newsletter.exe', icon:'news', w:420, h:300,
+  news:{ title:'Broadcast_Relay', icon:'news', w:420, h:300,
     html:() => `<form class="pane" novalidate>
       <h2>Subscribe</h2><p>Occasional notes on C, low-level mechanics and building things.</p>
       <label for="nl-email">Email address</label>
@@ -684,7 +700,7 @@ Object.assign(APPS, {
         // TODO: send input.value to your backend or form service here
         input.value = '';
         ok.hidden = false;
-        ok.textContent = 'Thanks for subscribing! Added to the database.';
+        ok.textContent = 'Subscribed. Welcome aboard, ' + (window.SESSION || 'Guest') + '!';
       });
     } },
 
@@ -746,22 +762,22 @@ Object.assign(APPS, {
    Themes.dir: overwrite :root variables at runtime
    ========================================================= */
 const THEMES = {
-  Joyful_Hippie:{ note:'Tie-dye gradient, warm colours', vars:{
-    '--bg':'#fbe9d0','--lime':'#ff477e','--mag':'#70d6ff','--purple':'#ff9f1c','--deep':'#ffd166',
-    '--paper':'#fffdf7','--ink':'#2b1a1c','--body':'#f4ebd8','--text':'#2b1a1c',
-    '--on':'#fff','--baroff':'#b8a99a','--tbbg':'#dcd3c6','--card':'#fff','--panel':'#fefefe','--clockbg':'#eaddcd',
-    '--strip':'#f4ebd8','--line':'#ddd','--h2':'#ff477e','--stuck':'#ff9f1c','--idea':'#1982c4',
-    '--selbg':'rgba(255,255,255,.4)','--ish':'1px 1px 0 #fff','--crt':'rgba(0,0,0,.08)','--vig':'linear-gradient(transparent,transparent)',
-    '--deskbg':'radial-gradient(circle at 0% 0%,#ff5e5b,#ffca3a,#8ac926,#1982c4,#6a4c93)','--desksize':'600% 600%','--deskanim':'drift' }},
-  Dark_NeoNoir:{ note:'Pitch black, acid lime, magenta', vars:{
-    '--bg':'#151515','--lime':'#C6F22D','--mag':'#FF2BD6','--purple':'#3b0a63','--deep':'#1a0630',
-    '--paper':'#F4F2E9','--ink':'#151515','--body':'#1b1b1b','--text':'#F4F2E9',
-    '--on':'#151515','--baroff':'#6d8a14','--tbbg':'#0c0c0c','--card':'#111','--panel':'#111','--clockbg':'#0c0c0c',
-    '--strip':'#F4F2E9','--line':'#3a3a3a','--h2':'#151515','--stuck':'#FF2BD6','--idea':'#8fb7ff',
-    '--selbg':'rgba(198,242,45,.14)','--ish':'none','--crt':'rgba(0,0,0,.22)',
-    '--vig':'radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.45))',
+  Swiss:{ label:'B&W', vars:{
+    '--bg':'#151515','--lime':'#F5F5F5','--mag':'#9a9a9a','--purple':'#5a5a5a','--deep':'#222',
+    '--paper':'#F5F5F5','--ink':'#151515','--body':'#1c1c1c','--text':'#F5F5F5',
+    '--on':'#151515','--baroff':'#555','--tbbg':'#0c0c0c','--card':'#111','--panel':'#111','--clockbg':'#0c0c0c',
+    '--strip':'#F5F5F5','--line':'#3a3a3a','--h2':'#151515','--stuck':'#F5F5F5','--idea':'#cfcfcf',
+    '--selbg':'rgba(245,245,245,.14)','--ish':'none','--crt':'rgba(0,0,0,.12)','--vig':'linear-gradient(transparent,transparent)',
     '--deskbg':'#151515','--desksize':'auto','--deskanim':'none' }},
-  Matrix:{ note:'Black, neon green, falling code', vars:{
+  XP:{ label:'XP', vars:{
+    '--bg':'#3a6ea5','--lime':'#245edb','--mag':'#3f8cf3','--purple':'#1941a5','--deep':'#2f6fd6',
+    '--paper':'#fff','--ink':'#111','--body':'#ece9d8','--text':'#111',
+    '--on':'#fff','--baroff':'#7a96df','--tbbg':'linear-gradient(#f3f3f6,#b9bac6)','--card':'#fff','--panel':'#f6f4ea','--clockbg':'#d9d9e2',
+    '--strip':'#ece9d8','--line':'#aca899','--h2':'#245edb','--stuck':'#c77700','--idea':'#245edb',
+    '--selbg':'rgba(36,94,219,.25)','--ish':'1px 1px 0 #000','--crt':'rgba(0,0,0,0)','--vig':'linear-gradient(transparent,transparent)',
+    '--deskbg':'radial-gradient(ellipse 90% 55% at 25% 108%,#6cc23a 0 62%,transparent 63%),radial-gradient(ellipse 80% 45% at 90% 112%,#4fa52a 0 62%,transparent 63%),linear-gradient(#1f5fd0,#8dc3f5 70%)',
+    '--desksize':'auto','--deskanim':'none','--edge':'#0a3fb0','--sh':'#0a3fb0' }},
+  Matrix:{ label:'Matrix', vars:{
     '--bg':'#000','--lime':'#00FF41','--mag':'#008F11','--purple':'#00b32c','--deep':'#001a05',
     '--paper':'#021208','--ink':'#00FF41','--body':'#050d05','--text':'#00FF41',
     '--on':'#000','--baroff':'#0b8a2a','--tbbg':'#000','--card':'#031006','--panel':'#031006','--clockbg':'#000',
@@ -770,39 +786,29 @@ const THEMES = {
     '--vig':'radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.6))',
     '--deskbg':'#000','--desksize':'auto','--deskanim':'none',
     '--edge':'#0a6b22','--sh':'#0a6b22','--rain':'.35','--raind':'block' }},
-  Dune:{ note:'Spice orange, desert sand, melange blue', vars:{
-    '--bg':'#1A2533','--lime':'#D9702B','--mag':'#EDD09F','--purple':'#8a3d10','--deep':'#2a3a52',
-    '--paper':'#EDD09F','--ink':'#1A2533','--body':'#223045','--text':'#EDD09F',
-    '--on':'#1A2533','--baroff':'#b87a45','--tbbg':'#111a26','--card':'#16202e','--panel':'#16202e','--clockbg':'#111a26',
-    '--strip':'#EDD09F','--line':'#34465e','--h2':'#b3500f','--stuck':'#EDD09F','--idea':'#5aa9ff',
-    '--selbg':'rgba(217,112,43,.22)','--ish':'none','--crt':'rgba(0,0,0,.12)',
-    '--vig':'radial-gradient(ellipse at center,transparent 65%,rgba(0,0,0,.35))',
-    '--deskbg':'radial-gradient(ellipse 120% 38% at 25% 112%,#8a5a2b 0 62%,transparent 63%),radial-gradient(ellipse 100% 34% at 85% 118%,#D9702B 0 58%,transparent 59%),linear-gradient(#1A2533,#2e4160)',
-    '--desksize':'auto','--deskanim':'none','--edge':'var(--lime)','--sh':'#7a4a1f' }}
+  Acid:{ label:'Acid', vars:{
+    '--bg':'#fbe9d0','--lime':'#ff477e','--mag':'#70d6ff','--purple':'#ff9f1c','--deep':'#ffd166',
+    '--paper':'#fffdf7','--ink':'#2b1a1c','--body':'#f4ebd8','--text':'#2b1a1c',
+    '--on':'#fff','--baroff':'#b8a99a','--tbbg':'#dcd3c6','--card':'#fff','--panel':'#fefefe','--clockbg':'#eaddcd',
+    '--strip':'#f4ebd8','--line':'#ddd','--h2':'#ff477e','--stuck':'#ff9f1c','--idea':'#1982c4',
+    '--selbg':'rgba(255,255,255,.4)','--ish':'1px 1px 0 #fff','--crt':'rgba(0,0,0,.08)','--vig':'linear-gradient(transparent,transparent)',
+    '--deskbg':'radial-gradient(circle at 0% 0%,#ff5e5b,#ffca3a,#8ac926,#1982c4,#6a4c93)','--desksize':'600% 600%','--deskanim':'drift' }}
 };
 // Defaults every theme inherits unless it overrides them
 const THEME_DEFAULTS = {'--edge':'var(--lime)','--sh':'var(--mag)','--rain':'0','--raind':'none'};
-let currentTheme = 'Joyful_Hippie';
+let currentTheme = 'Swiss';
 function applyTheme(name){
   if (!THEMES[name]) return;
   Object.entries({...THEME_DEFAULTS, ...THEMES[name].vars}).forEach(([k,v]) => document.documentElement.style.setProperty(k, v));
   currentTheme = name;
   try { localStorage.setItem('zk-theme', name); } catch(e) {}
 }
-Object.assign(APPS, {
-  themes:{ title:'C:\\Themes', icon:'dir', w:420, h:330,
-    html:() => `<div class="col"><div class="path">C:\\Themes\\</div><div class="content">${Object.entries(THEMES).map(([k,t]) =>
-      `<button class="trow" data-k="${k}"><span class="sw"><i style="background:${t.vars['--bg']}"></i><i style="background:${t.vars['--lime']}"></i><i style="background:${t.vars['--mag']}"></i></span>
-       <span>${k}.theme<br><small>${esc(t.note)}</small></span><span class="cur"></span></button>`).join('')}</div>
-      <div class="status">Click a .theme file to apply it</div></div>`,
-    init(win){
-      const rows = win.querySelectorAll('.trow'), st = win.querySelector('.status');
-      const mark = () => rows.forEach(r => r.querySelector('.cur').textContent = r.dataset.k === currentTheme ? '[active]' : '');
-      rows.forEach(r => r.addEventListener('click', () => { applyTheme(r.dataset.k); mark(); st.textContent = `Applied ${r.dataset.k}.theme`; }));
-      mark();
-    } }
-});
-try { applyTheme(localStorage.getItem('zk-theme') || currentTheme); } catch(e) { applyTheme(currentTheme); }
+try { const t = localStorage.getItem('zk-theme'); applyTheme(THEMES[t] ? t : currentTheme); } catch(e) { applyTheme(currentTheme); }
+const THEME_ORDER = Object.keys(THEMES);
+const themeBtn = document.getElementById('themebtn');
+const syncThemeBtn = () => { const n = document.getElementById('themename'); if (n) n.textContent = THEMES[currentTheme].label; };
+if (themeBtn) themeBtn.addEventListener('click', () => { applyTheme(THEME_ORDER[(THEME_ORDER.indexOf(currentTheme) + 1) % THEME_ORDER.length]); syncThemeBtn(); });
+syncThemeBtn();
 
 /* =========================================================
    Weather widget (Open-Meteo, no API key)
@@ -856,16 +862,49 @@ async function loadWeather(){
    Replace their bodies with Firebase/Supabase calls later; the UI below stays as is.
    A note is {id, text, ts (ISO string), place}.
    ========================================================= */
+/* ---------------------------------------------------------
+   DATA LAYER (Wall + Snake leaderboard). localStorage always works; Supabase is optional.
+   To enable the free Supabase backend:
+   1. Create a project, then in the SQL editor run:
+        create table wall_notes (id text primary key, text text, by text, ts timestamptz, place text);
+        create table snake_scores (id bigint generated always as identity primary key, name text, score int, created_at timestamptz default now());
+        alter table wall_notes enable row level security;  alter table snake_scores enable row level security;
+        create policy "read notes"  on wall_notes  for select using (true);
+        create policy "add notes"   on wall_notes  for insert with check (char_length(text) <= 200);
+        create policy "read scores" on snake_scores for select using (true);
+        create policy "add scores"  on snake_scores for insert with check (score between 0 and 1000);
+   2. Paste the project URL and the public anon key below. (The anon key is meant to be public; the policies protect the data.)
+   If a request fails, the code falls back to localStorage silently.
+   --------------------------------------------------------- */
+const SUPABASE = {url:'', key:''};          // e.g. {url:'https://xxxx.supabase.co', key:'eyJ...'}
+const sbOn = () => !!(SUPABASE.url && SUPABASE.key);
+const sb = (path, opt = {}) => fetch(SUPABASE.url + '/rest/v1/' + path, {...opt, headers:{apikey:SUPABASE.key, Authorization:'Bearer ' + SUPABASE.key, 'Content-Type':'application/json', Prefer:'return=minimal'}})
+  .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.status === 201 || r.status === 204 ? null : r.json(); });
+const lget = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch(e) { return d; } };
+const lset = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e) { return false; } };
+
 const NOTES_KEY = 'zk-wall';
 async function fetchNotes(){
-  try { return JSON.parse(localStorage.getItem(NOTES_KEY)) || []; } catch(e) { return []; }
+  if (sbOn()) { try { return await sb('wall_notes?select=*&order=ts.desc&limit=100'); } catch(e) { console.warn('Supabase notes failed, using localStorage', e); } }
+  return lget(NOTES_KEY, []);
 }
 async function saveNote(note){
-  const all = await fetchNotes();
-  all.unshift(note);
-  localStorage.setItem(NOTES_KEY, JSON.stringify(all.slice(0, 100)));   // throws if storage is full/blocked
+  const all = lget(NOTES_KEY, []); all.unshift(note);
+  const ok = lset(NOTES_KEY, all.slice(0, 100));
+  if (sbOn()) { try { await sb('wall_notes', {method:'POST', body:JSON.stringify(note)}); return note; } catch(e) { console.warn('Supabase save failed', e); } }
+  if (!ok) throw new Error('storage blocked');
   return note;
 }
+const SEED_SCORES = [{name:'ptr_master', score:42}, {name:'malloc_mo', score:31}, {name:'segfault_sam', score:18}];
+async function fetchScores(){
+  if (sbOn()) { try { return await sb('snake_scores?select=name,score&order=score.desc&limit=5'); } catch(e) { console.warn('Supabase scores failed', e); } }
+  return lget('zk-scores', []).concat(SEED_SCORES).sort((a, b) => b.score - a.score).slice(0, 5);
+}
+async function saveScore(name, score){
+  const l = lget('zk-scores', []); l.push({name, score}); lset('zk-scores', l.sort((a, b) => b.score - a.score).slice(0, 20));
+  if (sbOn()) { try { await sb('snake_scores', {method:'POST', body:JSON.stringify({name, score})}); } catch(e) { console.warn('Supabase score save failed', e); } }
+}
+const lbHtml = rows => rows.map((r, i) => `<div><span>${i + 1}. ${esc(r.name)}</span><span>${r.score}</span></div>`).join('');
 
 const PIT = ['#ffe97a','#ffb3c7','#a8e6ff','#c4f5a0'];
 const hash = str => [...str].reduce((h,c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
@@ -940,7 +979,8 @@ Object.assign(APPS, {
         running = false; clearInterval(SNAKE.timer);
         best = Math.max(best, score); hud(); try { localStorage.setItem('zk-snake', best); } catch(e) {}
         ov.querySelector('h3').textContent = 'GAME OVER';
-        ov.querySelector('p').innerHTML = `Score: ${score}<div class="lb">${lbRows(best)}</div>`;
+        ov.querySelector('p').innerHTML = `Score: ${score}<div class="lb">Loading...</div>`;
+        (score > 0 ? saveScore(window.SESSION || 'Guest', score) : Promise.resolve()).then(fetchScores).then(rows => { const el = ov.querySelector('.lb'); if (el) el.innerHTML = lbHtml(rows); });
         ov.querySelector('button').textContent = 'Restart';
         ov.hidden = false;
       }
@@ -978,8 +1018,8 @@ const SNAKE = {timer:null, key:null};
 
 Object.assign(APPS, {
   about:{ title:'zakaryae.txt - Notepad', icon:'txt', w:520, h:440, html:() => `<div class="doc" style="height:100%;white-space:pre-wrap">${esc(CV)}</div>` },
-  links:{ title:'C:\\Links', icon:'dir', w:420, h:260, html:() => `<div class="col"><div class="path">C:\\Links\\</div><div class="content"><table class="files"><tbody>
-    ${[['GitHub.lnk',LINKS.github],['LinkedIn.lnk',LINKS.linkedin],['Instagram.lnk',LINKS.instagram]].map(l => `<tr><td><a href="${esc(l[1])}" target="_blank" rel="noopener">${esc(l[0])}</a></td></tr>`).join('')}
+  links:{ title:'C:\\Links', icon:'links', w:420, h:260, html:() => `<div class="col"><div class="path">C:\\Links\\</div><div class="content"><table class="files"><tbody>
+    ${[['GitHub.lnk',LINKS.github],['LinkedIn.lnk',LINKS.linkedin],['Instagram.lnk',LINKS.instagram]].concat(LINKS.email ? [['Email.lnk','mailto:' + LINKS.email]] : []).map(l => `<tr><td><a href="${esc(l[1])}" target="_blank" rel="noopener">${esc(l[0])}</a></td></tr>`).join('')}
     </tbody></table></div></div>` }
 });
 
@@ -1017,11 +1057,20 @@ function bootChime(){
     setTimeout(() => C.close(), 2500);
   } catch(e) {}
 }
+/* Typewriter status bar: idle text and per-icon tips come from data.json (siteSettings) */
+(function(){
+  const bar = document.getElementById('statusbar'); let tm = null;
+  const type = t => { if (!bar) return; clearInterval(tm); let i = 0; tm = setInterval(() => { bar.textContent = '> ' + t.slice(0, ++i); if (i >= t.length) clearInterval(tm); }, 18); };
+  document.addEventListener('mouseover', e => { const el = e.target.closest && e.target.closest('[data-tip]'); if (el) type(TIPS[el.dataset.tip] || el.dataset.tip); });
+  document.addEventListener('mouseout', e => { if (e.target.closest && e.target.closest('[data-tip]')) type(IDLE); });
+  window.statusIdle = () => type(IDLE);
+})();
 </script>
 <script>
 /* Boot: separate script so a runtime error elsewhere can never leave the overlay stuck. */
 (function () {
   window.SESSION = 'Guest';
+  try { if (localStorage.getItem('zk-name')) { var g0 = document.getElementById('gate'); if (g0) g0.style.display = 'none'; } } catch (e) {}
   var booted = false;
   function boot(name) {
     if (booted) return;
@@ -1035,21 +1084,15 @@ function bootChime(){
     try { if (typeof bootChime === 'function') bootChime(); } catch (e) {}
     try { if (typeof loadWeather === 'function') loadWeather(); } catch (e) { console.error(e); }
     var ready = (typeof dataReady !== 'undefined') ? dataReady : Promise.resolve();
-    Promise.resolve(ready).then(function () { try { openApp('portfolio'); } catch (e) { console.error(e); } });
+    Promise.resolve(ready).then(function () { try { openApp('news'); if (window.statusIdle) window.statusIdle(); } catch (e) { console.error(e); } });
   }
   function bind() {
     var en = document.getElementById('g-enter'), sk = document.getElementById('g-skip'), inp = document.getElementById('gate-name');
     if (en) en.addEventListener('click', function () { boot(inp ? inp.value : ''); });
     if (sk) sk.addEventListener('click', function () { boot('Guest'); });
+    var saved = null; try { saved = localStorage.getItem('zk-name'); } catch (e) {}
+    if (saved) { boot(saved); return; }
     if (inp) { inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') boot(inp.value); }); inp.focus(); }
-    var rf = document.querySelector('#relay form');
-    if (rf) rf.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var i = rf.querySelector('input'), ok = rf.querySelector('.ok'); ok.hidden = false;
-      if (!i.checkValidity() || !i.value) { ok.textContent = 'Please enter a valid email address.'; return; }
-      try { var l = JSON.parse(localStorage.getItem('zk-news') || '[]'); l.push(i.value); localStorage.setItem('zk-news', JSON.stringify(l)); } catch (x) {}
-      i.value = ''; ok.textContent = 'Subscribed. Welcome aboard, ' + window.SESSION + '!';
-    });
     var sd = document.getElementById('showdesk'), hid = [];
     if (sd) sd.addEventListener('click', function () {
       if (typeof wins === 'undefined') return;
