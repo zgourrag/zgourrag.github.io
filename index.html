@@ -1,116 +1,393 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zakaryae OS</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>cat-os // portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+/* ===== TOKENS: swap these to re-theme ===== */
+:root{
+  --bg:#151515; --lime:#C6F22D; --mag:#FF2BD6; --purple:#3b0a63; --deep:#1a0630;
+  --paper:#F4F2E9; --ink:#151515; --body:#1b1b1b; --text:#F4F2E9; --tb:44px;
+  --font:'VT323','Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+  font:22px/1.15 var(--font);-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px dashed var(--mag);outline-offset:2px}
+
+/* ===== DESKTOP BACKGROUND: slow psychedelic waves ===== */
+#desktop{position:fixed;inset:0 0 var(--tb) 0;overflow:hidden;
+  background:
+    repeating-radial-gradient(circle at 20% 110%,transparent 0 38px,rgba(90,20,140,.35) 40px 44px),
+    repeating-radial-gradient(circle at 85% -10%,transparent 0 52px,rgba(255,43,214,.14) 54px 57px),
+    radial-gradient(ellipse at 50% 40%,var(--deep),var(--bg) 70%);
+  background-size:140% 140%,140% 140%,100% 100%;
+  animation:drift 40s linear infinite alternate}
+@keyframes drift{to{background-position:100% 60%,0 100%,0 0}}
+
+/* CRT overlay */
+#crt{position:fixed;inset:0;pointer-events:none;z-index:99999;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.22) 3px),
+             radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.45))}
+.glow{text-shadow:0 0 6px rgba(198,242,45,.55)}
+
+/* ===== ICONS ===== */
+#icons{position:absolute;inset:12px auto auto 12px;display:grid;gap:8px;
+  grid-auto-flow:row;grid-template-rows:repeat(auto-fill,104px);height:calc(100% - 24px);grid-auto-columns:104px}
+.icon{width:104px;height:100px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 2px;text-align:center;
+  font-size:20px;word-break:break-all;border:1px dashed transparent}
+.icon svg{width:44px;height:44px;filter:drop-shadow(0 0 5px rgba(198,242,45,.4))}
+.icon.sel{border-color:var(--lime);background:rgba(198,242,45,.14)}
+.icon span{padding:0 3px}.icon.sel span{background:var(--lime);color:var(--ink)}
+
+/* ===== WINDOWS ===== */
+.win{position:absolute;display:flex;flex-direction:column;background:var(--body);
+  border:2px solid var(--lime);box-shadow:6px 6px 0 var(--mag),0 0 24px rgba(198,242,45,.18);
+  min-width:260px;max-width:100vw}
+.win.min{display:none}
+.win.max{left:0!important;top:0!important;width:100%!important;height:100%!important;box-shadow:none}
+.bar{display:flex;align-items:center;gap:8px;background:var(--lime);color:var(--ink);padding:3px 4px 3px 8px;
+  cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.win:not(.active) .bar{background:#6d8a14;color:#222}
+.bar:active{cursor:grabbing}
+.bar .t{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:23px}
+.ctl{width:26px;height:24px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);line-height:1;font-size:20px;
+  display:grid;place-items:center}
+.ctl:hover{background:var(--mag)}
+.ctl.x:hover{background:#fff}
+.content{flex:1;overflow:auto;min-height:0}
+
+/* app: portfolio */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;padding:14px}
+.card{border:2px solid var(--text);background:#111;display:flex;flex-direction:column}
+.card:hover{border-color:var(--mag);box-shadow:4px 4px 0 var(--mag)}
+.thumb{aspect-ratio:4/3;background-size:cover;background-position:center}
+.card b{display:block;padding:6px 8px 0;color:var(--lime);font-weight:400;font-size:24px}
+.card p{padding:0 8px 8px;font-size:19px;opacity:.85}
+
+/* app: blog (text editor) */
+.menu{display:flex;gap:16px;padding:3px 10px;background:var(--paper);color:var(--ink);border-bottom:2px solid var(--ink)}
+.editor{display:flex;height:100%;min-height:0}
+.posts{width:34%;min-width:130px;background:#111;border-right:2px solid var(--lime);overflow:auto}
+.posts button{display:block;width:100%;text-align:left;padding:8px 10px;border-bottom:1px dashed #444}
+.posts button.on,.posts button:hover{background:var(--mag);color:var(--ink)}
+.posts small{display:block;opacity:.7;font-size:17px}
+.doc{flex:1;background:var(--paper);color:var(--ink);padding:16px 18px;overflow:auto;font-size:23px;line-height:1.25}
+.doc h2{font-weight:400;font-size:32px;margin-bottom:2px}
+.doc em{display:block;font-style:normal;color:#7a2a6b;margin-bottom:12px}
+.doc p{margin-bottom:12px;max-width:62ch}
+.col{display:flex;flex-direction:column;height:100%}
+
+/* app: folder */
+.path{padding:4px 10px;background:#111;border-bottom:2px solid var(--lime);color:var(--lime)}
+.files{width:100%;border-collapse:collapse}
+.files th{position:sticky;top:0;background:var(--purple);text-align:left;font-weight:400;padding:4px 10px;border-bottom:2px solid var(--mag)}
+.files td{padding:6px 10px;border-bottom:1px dashed #3a3a3a;white-space:nowrap}
+.files tr:hover td{background:rgba(255,43,214,.18)}
+.tag{border:1px solid currentColor;padding:0 6px;font-size:18px}
+.wip{color:var(--lime)}.stuck{color:var(--mag)}.idea{color:#8fb7ff}
+.status{padding:3px 10px;background:var(--paper);color:var(--ink);border-top:2px solid var(--ink);font-size:19px}
+
+/* ===== TASKBAR / START ===== */
+#taskbar{position:fixed;left:0;right:0;bottom:0;height:var(--tb);display:flex;align-items:center;gap:6px;padding:4px 6px;
+  background:#0c0c0c;border-top:2px solid var(--lime);z-index:90000}
+#start{display:flex;align-items:center;gap:8px;height:100%;padding:0 12px 0 8px;background:var(--mag);color:var(--ink);
+  border:2px solid var(--ink);box-shadow:inset -2px -2px 0 rgba(0,0,0,.35),0 0 12px rgba(255,43,214,.5);font-size:24px}
+#start svg{width:26px;height:26px}
+#start[aria-expanded=true]{box-shadow:inset 2px 2px 0 rgba(0,0,0,.45)}
+#tasks{flex:1;display:flex;gap:6px;overflow-x:auto;height:100%;scrollbar-width:none}
+.task{min-width:90px;max-width:170px;padding:0 10px;height:100%;border:2px solid #555;background:#1b1b1b;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.task.active{border-color:var(--lime);background:#2a3310;color:var(--lime)}
+#clock{padding:0 10px;color:var(--lime);border:2px inset #333;height:100%;display:grid;place-items:center}
+#menu{position:fixed;left:6px;bottom:calc(var(--tb) + 2px);width:260px;background:#0c0c0c;border:2px solid var(--mag);
+  box-shadow:6px 6px 0 var(--lime);z-index:90001;display:none}
+#menu.open{display:block}
+#menu .side{background:var(--mag);color:var(--ink);padding:6px 10px;font-size:26px;letter-spacing:2px}
+#menu button{display:block;width:100%;text-align:left;padding:8px 14px}
+#menu button:hover{background:var(--lime);color:var(--ink)}
+#menu hr{border:0;border-top:1px dashed #555;margin:2px 0}
+
+/* ===== MOBILE: windows become full-screen modals ===== */
+@media (max-width:700px){
+  :root{--tb:52px}
+  .win{left:0!important;top:0!important;width:100%!important;height:100%!important;box-shadow:none;border-width:0 0 2px}
+  .bar{cursor:default}.ctl.mx{display:none}
+  .editor{flex-direction:column}.posts{width:100%;height:34%;border-right:0;border-bottom:2px solid var(--lime)}
+  .ctl{width:36px;height:32px}
+  #tasks .task{min-width:70px}
+}
+@media (prefers-reduced-motion:reduce){#desktop{animation:none}}
+</style>
 </head>
 <body>
 
-  <!-- Desktop Icons -->
-  <main class="desktop">
-    <div class="desktop-icon" ondblclick="openWindow('about')">
-      <div class="icon-img">📄</div>
-      <span class="icon-label">about.txt</span>
-    </div>
+<div id="desktop"><nav id="icons" aria-label="Desktop"></nav></div>
+<div id="crt" aria-hidden="true"></div>
 
-    <div class="desktop-icon" ondblclick="openWindow('work')">
-      <div class="icon-img">📁</div>
-      <span class="icon-label">work/</span>
-    </div>
+<div id="menu" role="menu"></div>
+<div id="taskbar">
+  <button id="start" aria-haspopup="true" aria-expanded="false">
+    <!-- Black cat silhouette: replace the path data to restyle -->
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <path fill="#0b0b0b" d="M8 3l4 5.5q4-1 8 0L24 3l1.6 8.2q1.6 3-.6 6 2 3.2 1 7.3-1 4.5-6 4.5H11q-5 0-6-4.500-1-4.100 1-7.300-2.200-3-.6-6z"/>
+      <path fill="none" stroke="#0b0b0b" stroke-width="2.600" stroke-linecap="round" d="M25 27q6.500-.5 5-8-.8-3 .8-5.500"/>
+      <circle cx="12.500" cy="13" r="1.500" fill="#C6F22D"/><circle cx="19.500" cy="13" r="1.500" fill="#C6F22D"/>
+    </svg>
+    <span>Start</span>
+  </button>
+  <div id="tasks" aria-label="Open windows"></div>
+  <div id="clock" class="glow">--:--</div>
+</div>
 
-    <div class="desktop-icon" ondblclick="openWindow('blog')">
-      <div class="icon-img">📁</div>
-      <span class="icon-label">notes/</span>
-    </div>
-  </main>
+<script>
+/* =========================================================
+   CONFIG: edit your links, posts, projects and work here
+   ========================================================= */
+const LINKS = {
+  github:   'https://github.com/your-username',
+  linkedin: 'https://www.linkedin.com/in/your-name'
+};
 
-  <!-- Windows (Hidden by default) -->
-  
-  <!-- About Window -->
-  <div class="window" id="window-about">
-    <div class="window-header">
-      <span class="window-title">📄 about.txt - Notepad</span>
-      <button class="close-btn" onclick="closeWindow('about')">X</button>
-    </div>
-    <div class="window-content text-file">
-      <p>System User: Zakaryae</p>
-      <p>Status: Student @ 1337</p>
-      <br>
-      <p>Exploring low-level systems, C programming, web security, and digital strategy.</p>
-      <p>I combine analytical systems thinking with Swiss International Style visual design.</p>
-    </div>
-  </div>
+// Portfolio cards. Replace `img` with a real path (e.g. 'img/site.png') to show your own images.
+const WORK = [
+  {name:'Project One',   desc:'Short description of what it is.',  img:null, hue:280},
+  {name:'Project Two',   desc:'Tools used, what you learned.',     img:null, hue:320},
+  {name:'Project Three', desc:'A one-line pitch goes here.',       img:null, hue:80},
+  {name:'Project Four',  desc:'Link it up in the card markup.',    img:null, hue:260},
+  {name:'Project Five',  desc:'Placeholder text, swap me.',        img:null, hue:300},
+  {name:'Project Six',   desc:'Add as many cards as you like.',    img:null, hue:100}
+];
 
-  <!-- Work Folder Window -->
-  <div class="window" id="window-work">
-    <div class="window-header">
-      <span class="window-title">📁 C:\Zakaryae\Work</span>
-      <button class="close-btn" onclick="closeWindow('work')">X</button>
-    </div>
-    <div class="window-toolbar">File Edit View Help</div>
-    <div class="window-content folder-view">
-      <div class="file-item">
-        <div class="icon-img">⚙️</div>
-        <span>libft.c</span>
-      </div>
-      <div class="file-item">
-        <div class="icon-img">🎨</div>
-        <span>balsam.exe</span>
-      </div>
-      <div class="file-item">
-        <div class="icon-img">📈</div>
-        <span>ads_strategy.pdf</span>
-      </div>
-    </div>
-  </div>
+// Blog posts: each paragraph is one string in `body`.
+const POSTS = [
+  {title:'hello_world.txt', date:'2026-11-01', body:[
+    'This is your first post. Replace this text with your own writing.',
+    'Each string in the body array becomes one paragraph.']},
+  {title:'what_i_learned.txt', date:'2026-10-20', body:[
+    'Write about something you figured out recently.',
+    'Short posts work great in a retro text editor.']},
+  {title:'notes_to_self.txt', date:'2026-10-05', body:[
+    'Placeholder article. Add as many as you want.']}
+];
 
-  <!-- Notes Folder Window -->
-  <div class="window" id="window-blog">
-    <div class="window-header">
-      <span class="window-title">📁 C:\Zakaryae\Notes</span>
-      <button class="close-btn" onclick="closeWindow('blog')">X</button>
-    </div>
-    <div class="window-toolbar">File Edit View Help</div>
-    <div class="window-content folder-view">
-      <div class="file-item">
-        <div class="icon-img">🔒</div>
-        <span>web_security.md</span>
-      </div>
-      <div class="file-item">
-        <div class="icon-img">🎵</div>
-        <span>vmpc2000xl.txt</span>
-      </div>
-    </div>
-  </div>
+// Unfinished projects folder.
+const WIP = [
+  {file:'minishell.c',   type:'C',     status:'wip',   note:'Parsing done, pipes next', date:'2026-10-28'},
+  {file:'my_printf.c',   type:'C',     status:'stuck', note:'Float formatting bugs',     date:'2026-10-14'},
+  {file:'tui_notes.sh',  type:'Shell', status:'idea',  note:'Terminal note-taking app',  date:'2026-09-30'},
+  {file:'packet_peek.c', type:'C',     status:'idea',  note:'Tiny packet sniffer',       date:'2026-09-12'}
+];
 
-  <!-- Bottom Taskbar -->
-  <header class="taskbar">
-    <div class="taskbar-left">
-      <button class="start-btn" onclick="toggleStartMenu()">
-        <span class="system-dot"></span> START
-      </button>
-      <div class="start-menu" id="startMenu">
-        <div class="start-menu-sidebar">ZAKARYAE OS</div>
-        <div class="start-menu-items">
-          <div class="menu-item" onclick="openWindow('about'); toggleStartMenu();">📄 about.txt</div>
-          <div class="menu-item" onclick="openWindow('work'); toggleStartMenu();">📁 work</div>
-          <div class="menu-divider"></div>
-          <a href="mailto:contact@zakaryae.me" class="menu-item">✉️ Mail</a>
-          <a href="https://github.com" target="_blank" class="menu-item">🐙 GitHub</a>
-        </div>
-      </div>
-    </div>
-    <div class="taskbar-right">
-      <span class="status-tag">Morocco (GMT+1)</span>
-      <span id="systemClock">00:00</span>
-    </div>
-  </header>
+/* =========================================================
+   ICONS (inline SVG)
+   ========================================================= */
+const S = 'viewBox="0 0 44 44" fill="none" stroke-width="2.500"';
+const ICO = {
+  exe:`<svg ${S} stroke="#C6F22D"><rect x="4" y="7" width="36" height="30" fill="#151515"/><rect x="4" y="7" width="36" height="7" fill="#C6F22D"/><path d="M12 22l5 4-5 4M21 31h9"/></svg>`,
+  txt:`<svg ${S} stroke="#F4F2E9"><path d="M9 4h19l7 7v29H9z" fill="#151515"/><path d="M15 18h14M15 24h14M15 30h9" stroke="#FF2BD6"/></svg>`,
+  dir:`<svg ${S} stroke="#C6F22D"><path d="M4 12h14l3 4h19v22H4z" fill="#3b0a63"/><path d="M4 20h36" stroke="#FF2BD6"/></svg>`,
+  lnk:`<svg ${S} stroke="#FF2BD6"><rect x="6" y="6" width="32" height="32" fill="#151515"/><path d="M16 28L30 14M20 14h10v10" stroke="#C6F22D"/></svg>`
+};
 
-  <script src="script.js"></script>
+/* =========================================================
+   APPS: each returns the inner HTML of a window
+   ========================================================= */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const APPS = {
+  portfolio:{ title:'Portfolio.exe', icon:'exe', w:620, h:440, html:() =>
+    `<div class="grid">${WORK.map(p => `
+      <article class="card">
+        <div class="thumb" style="background-image:${p.img ? `url('${esc(p.img)}')` :
+          `repeating-radial-gradient(circle at 30% 30%,hsl(${p.hue} 80% 22%) 0 10px,#111 11px 20px)`}"></div>
+        <b>${esc(p.name)}</b><p>${esc(p.desc)}</p>
+      </article>`).join('')}</div>` },
+
+  blog:{ title:'Blog.txt - Editor', icon:'txt', w:700, h:440, html:() =>
+    `<div class="col"><div class="menu"><span>File</span><span>Edit</span><span>Search</span><span>Help</span></div>
+     <div class="editor"><div class="posts">${POSTS.map((p,i) =>
+       `<button data-i="${i}" class="${i?'':'on'}">${esc(p.title)}<small>${esc(p.date)}</small></button>`).join('')}</div>
+     <article class="doc"></article></div></div>`,
+    init(win){
+      const doc = win.querySelector('.doc'), btns = win.querySelectorAll('.posts button');
+      const show = i => {
+        const p = POSTS[i];
+        doc.innerHTML = `<h2>${esc(p.title)}</h2><em>${esc(p.date)}</em>` + p.body.map(t => `<p>${esc(t)}</p>`).join('');
+        doc.scrollTop = 0;
+        btns.forEach((b,j) => b.classList.toggle('on', i === j));
+      };
+      btns.forEach(b => b.addEventListener('click', () => show(+b.dataset.i)));
+      show(0);
+    } },
+
+  wip:{ title:'C:\\Unfinished_Projects', icon:'dir', w:640, h:380, html:() =>
+    `<div class="col"><div class="path">C:\\Unfinished_Projects\\</div>
+     <div class="content"><table class="files"><thead><tr><th>Name</th><th>Type</th><th>Status</th><th>Note</th><th>Modified</th></tr></thead><tbody>
+     ${WIP.map(f => `<tr><td>${esc(f.file)}</td><td>${esc(f.type)}</td>
+       <td><span class="tag ${f.status}">${esc(f.status)}</span></td><td>${esc(f.note)}</td><td>${esc(f.date)}</td></tr>`).join('')}
+     </tbody></table></div><div class="status">${WIP.length} object(s)</div></div>` }
+};
+
+// Desktop icons. `app` opens a window, `href` opens an external link.
+const ICONS = [
+  {label:'Portfolio.exe',          icon:'exe', app:'portfolio'},
+  {label:'Blog.txt',               icon:'txt', app:'blog'},
+  {label:'Unfinished_Projects.dir',icon:'dir', app:'wip'},
+  {label:'GitHub.lnk',             icon:'lnk', href:LINKS.github},
+  {label:'LinkedIn.lnk',           icon:'lnk', href:LINKS.linkedin}
+];
+
+/* =========================================================
+   WINDOW MANAGER
+   ========================================================= */
+const desktop = document.getElementById('desktop');
+const tasksEl = document.getElementById('tasks');
+const wins = {};            // id -> {el, btn}
+let zTop = 10, openCount = 0;
+const isMobile = () => matchMedia('(max-width:700px)').matches;
+
+function openApp(id){
+  if (wins[id]) { restore(id); return; }          // already open: bring back
+  const app = APPS[id];
+  const el = document.createElement('section');
+  el.className = 'win';
+  el.setAttribute('role','dialog');
+  el.setAttribute('aria-label', app.title);
+  el.innerHTML = `
+    <header class="bar"><span class="t glow">${esc(app.title)}</span>
+      <button class="ctl mn" aria-label="Minimize">_</button>
+      <button class="ctl mx" aria-label="Maximize">&#9633;</button>
+      <button class="ctl x"  aria-label="Close">&times;</button></header>
+    <div class="content">${app.html()}</div>`;
+
+  // Size and cascade position, clamped so it always fits on screen
+  const w = Math.min(app.w, innerWidth - 20), h = Math.min(app.h, desktop.clientHeight - 20);
+  const off = (openCount++ % 6) * 28;
+  el.style.width = w + 'px'; el.style.height = h + 'px';
+  el.style.left = Math.max(0, Math.min(150 + off, innerWidth - w)) + 'px';
+  el.style.top  = Math.max(0, Math.min(30 + off, desktop.clientHeight - h)) + 'px';
+  desktop.appendChild(el);
+
+  const btn = document.createElement('button');
+  btn.className = 'task'; btn.textContent = app.title;
+  btn.addEventListener('click', () => {
+    if (el.classList.contains('min')) restore(id);
+    else if (el.classList.contains('active')) minimize(id);
+    else focusWin(id);
+  });
+  tasksEl.appendChild(btn);
+  wins[id] = {el, btn};
+
+  el.addEventListener('pointerdown', () => focusWin(id));
+  el.querySelector('.mn').addEventListener('click', () => minimize(id));
+  el.querySelector('.mx').addEventListener('click', () => el.classList.toggle('max'));
+  el.querySelector('.x').addEventListener('click', () => closeWin(id));
+  const bar = el.querySelector('.bar');
+  bar.addEventListener('dblclick', e => { if (!e.target.closest('.ctl') && !isMobile()) el.classList.toggle('max'); });
+  makeDraggable(el, bar);
+  if (app.init) app.init(el);
+  focusWin(id);
+}
+
+// Bring a window to the front and mark it active
+function focusWin(id){
+  const w = wins[id]; if (!w) return;
+  Object.values(wins).forEach(o => { o.el.classList.remove('active'); o.btn.classList.remove('active'); });
+  w.el.classList.remove('min');
+  w.el.style.zIndex = ++zTop;
+  w.el.classList.add('active'); w.btn.classList.add('active');
+}
+function restore(id){ focusWin(id); }
+function minimize(id){
+  const w = wins[id];
+  w.el.classList.add('min'); w.el.classList.remove('active'); w.btn.classList.remove('active');
+  // hand focus to the topmost remaining visible window
+  const vis = Object.keys(wins).filter(k => !wins[k].el.classList.contains('min'))
+    .sort((a,b) => wins[b].el.style.zIndex - wins[a].el.style.zIndex);
+  if (vis.length) focusWin(vis[0]);
+}
+function closeWin(id){
+  const w = wins[id]; if (!w) return;
+  w.el.remove(); w.btn.remove(); delete wins[id];
+  const vis = Object.keys(wins).filter(k => !wins[k].el.classList.contains('min'))
+    .sort((a,b) => wins[b].el.style.zIndex - wins[a].el.style.zIndex);
+  if (vis.length) focusWin(vis[0]);
+}
+
+/* Drag a window by its title bar (Pointer Events: mouse, touch and pen) */
+function makeDraggable(win, handle){
+  handle.addEventListener('pointerdown', e => {
+    if (e.target.closest('.ctl') || isMobile() || win.classList.contains('max') || e.button > 0) return;
+    const r = win.getBoundingClientRect();
+    const dx = e.clientX - r.left, dy = e.clientY - r.top;     // grab offset
+    handle.setPointerCapture(e.pointerId);                      // keep events even if pointer leaves the bar
+
+    const move = ev => {
+      // keep at least 80px of the title bar reachable, and never above the screen top
+      const x = Math.min(Math.max(ev.clientX - dx, 80 - r.width), innerWidth - 80);
+      const y = Math.min(Math.max(ev.clientY - dy, 0), desktop.clientHeight - 30);
+      win.style.left = x + 'px'; win.style.top = y + 'px';
+    };
+    const up = () => {
+      handle.removeEventListener('pointermove', move);
+      handle.removeEventListener('pointerup', up);
+      handle.removeEventListener('pointercancel', up);
+    };
+    handle.addEventListener('pointermove', move);
+    handle.addEventListener('pointerup', up);
+    handle.addEventListener('pointercancel', up);
+  });
+}
+
+/* =========================================================
+   DESKTOP ICONS, START MENU, CLOCK
+   ========================================================= */
+const iconsEl = document.getElementById('icons');
+const tapToOpen = matchMedia('(pointer:coarse)').matches;   // phones: single tap opens
+const activate = it => it.app ? openApp(it.app) : window.open(it.href, '_blank', 'noopener');
+
+ICONS.forEach(it => {
+  const b = document.createElement('button');
+  b.className = 'icon';
+  b.innerHTML = ICO[it.icon] + `<span class="glow">${esc(it.label)}</span>`;
+  b.addEventListener('click', e => {
+    e.stopPropagation();
+    iconsEl.querySelectorAll('.sel').forEach(n => n.classList.remove('sel'));
+    b.classList.add('sel');
+    if (tapToOpen) activate(it);
+  });
+  b.addEventListener('dblclick', () => activate(it));
+  b.addEventListener('keydown', e => { if (e.key === 'Enter') activate(it); });
+  iconsEl.appendChild(b);
+});
+desktop.addEventListener('click', () => iconsEl.querySelectorAll('.sel').forEach(n => n.classList.remove('sel')));
+
+const menu = document.getElementById('menu'), startBtn = document.getElementById('start');
+menu.innerHTML = '<div class="side glow">CAT-OS</div>' +
+  ICONS.map((it,i) => `<button role="menuitem" data-i="${i}">${esc(it.label)}</button>`).join('') +
+  '<hr><button role="menuitem" data-off="1">Shut down...</button>';
+const setMenu = open => { menu.classList.toggle('open', open); startBtn.setAttribute('aria-expanded', open); };
+startBtn.addEventListener('click', e => { e.stopPropagation(); setMenu(!menu.classList.contains('open')); });
+menu.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.off) Object.keys(wins).forEach(closeWin); else activate(ICONS[+b.dataset.i]);
+  setMenu(false);
+});
+document.addEventListener('click', e => { if (!e.target.closest('#menu')) setMenu(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+
+const clock = document.getElementById('clock');
+const tick = () => clock.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+tick(); setInterval(tick, 20000);
+
+// Open the portfolio on first load (delete this line to start with an empty desktop)
+openApp('portfolio');
+</script>
 </body>
 </html>
