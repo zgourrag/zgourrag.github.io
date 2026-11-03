@@ -4,21 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <title>Content Manager</title>
-  <!-- Decap reads its settings from config.yml in this same folder -->
+  <title>OS Control Panel</title>
+  
+  <!-- Sveltia reads its settings from your existing config.yml -->
   <link href="config.yml" type="text/yaml" rel="cms-config-url">
-  <!-- Netlify Identity: only used if you switch the backend to git-gateway (see config.yml) -->
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  <script>
-    // After an Identity invite/login link, send the user back to the CMS
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on('init', user => {
-        if (!user) window.netlifyIdentity.on('login', () => { document.location.href = '/master/'; });
-      });
-    }
-  </script>
+  <!-- Sveltia CMS script: handles GitHub OAuth entirely in the browser -->
+  <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
 </body>
 </html>
