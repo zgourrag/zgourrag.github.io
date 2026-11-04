@@ -1,5 +1,6 @@
 {
   "siteSettings": {
+
     "siteTitle": "be curious.",
     "profileName": "Zakaryae Gourragui",
     "profileIntro": "1337 @ UM6P Rabat | I decode humans, learning to code software | Marketing Strategist & Brand Builder | Master’s in Digital Marketing Strategies @ UIT | 3+ Years in Marketing",
@@ -7,6 +8,7 @@
     "cv": "ZAKARYAE GOURRAGUI\n\nSoftware Engineering Student · Creative Direction · Brand Strategy · Morocco\n\nA curious mind bridging low-level systems engineering, brand strategy, and creative execution.\n\nABOUT\nI’m a software engineering student at 1337 (UM6P) with a deep background in digital marketing, agency leadership, and back-office operations. Having managed client branding and execution, I now focus on first-principles engineering, memory management, and building clean digital experiences. I enjoy understanding how people think, turning complex ideas into working code, and keeping the technical and creative details moving.\n\nEXPERIENCE\n1337 SCHOOL (UM6P) — Rabat \n\nSoftware Engineering Student | Sep 2026 – Present\n\nStudying low-level C programming, memory allocation routines, and foundational computer science through peer-to-peer, project-based learning.\n\nDeveloping custom implementations of standard library functions (libft), custom data structures (t_list), and robust command-line utilities.\n\nApplying first-principles analysis to understand binary encodings, file descriptors, and core algorithms directly without high-level abstractions.\n\nDIGISELL TECHNOLOGIES — Kenitra\n\nBack Office Agent | Sep 2025 – Jan 2026\n\nProcessed back-office operations with a rigorous focus on data accuracy and workflow consistency.\n\nMaintained 95% QA compliance while consistently exceeding daily and weekly output targets.\n\nLearned complex operational pipelines rapidly and integrated smoothly into cross-functional teams.\n\nMOS’ART AGENCY — Kenitra\n\nMarketing Manager | Mar 2023 – Jul 2024\n\nDirected internal teams and coordinated cross-channel execution across diverse client projects.\n\nManaged direct client relations, translating business objectives into actionable communication strategies.\n\nOversaw end-to-end deliverables from initial creative brief to final production.\n\nFREELANCE\n\nMarketing & Creative Projects\n\nExecuted branding, brand positioning, communication frameworks, and digital content campaigns.\n\nTranslated abstract conceptual ideas into practical, high-converting creative deliverables.\n\nEDUCATION\n1337 School (UM6P) — Software Engineering Curriculum (C/C++, Systems Programming)\n\nIbn Tofail University — Master’s in Digital Marketing Strategy (Continuing Education)\n\nIbn Tofail University — Bachelor’s in Business Administration & DEUG in Economics & Management\n\nINTERESTS\nSystems Architecture · Branding · Low-Level Programming · Human Behavior · Culture · Visual Storytelling · Digital Media\n\nA LITTLE MORE\nI like clear ideas, thoughtful design, curious conversations, and building things from the ground up—whether it's crafting a brand identity or writing a custom memory allocator in C.\n\nCONTACT\nEmail: [your email]\n\nPortfolio / OS: zakaryae.me",
     "quoteText": "The sun does not care whether the grass appreciates its rays. It shines because it is its nature to shine.",
     "quoteAuthor": "Ethan Hawke",
+
     "email": "hello@zakaryae.me",
     "github": "https://github.com/zgourrag",
     "linkedin": "https://www.linkedin.com/in/zakaryae-gourragui/",
@@ -28,6 +30,10 @@
       {
         "label": "Projects.dir",
         "text": "[ DIR ] — Everything I started. Some even finished."
+      },
+      {
+        "label": "cc.exe",
+        "text": "[ XP ] — Common Core, gamified. Leaks will be spotted."
       },
       {
         "label": "Links.dir",
@@ -53,7 +59,9 @@
         "label": "Snake.exe",
         "text": "[ GAME ] — Do not eat yourself."
       }
-    ]
+    ],
+    "relayAccessKey": "",
+    "relayEndpoint": "https://api.web3forms.com/submit"
   },
   "work": [
     {
@@ -108,6 +116,189 @@
       "status": "in progress",
       "note": "Initial draft done, revision time",
       "date": "2026-11-03"
+    }
+  ],
+  "ccModules": [
+    {
+      "id": "malloc",
+      "title": "malloc & free: your first heap",
+      "xp": 30,
+      "cards": [
+        {
+          "title": "malloc(size)",
+          "definition": "malloc reserves size bytes on the heap and returns a pointer to the first byte, or NULL if it fails. The memory is NOT initialised.",
+          "metaphor": "Renting a storage unit. The pointer is the only key. Lose the key and the unit stays rented forever.",
+          "visual": "  you           heap\n [ ptr ] ---> [ ?? ?? ?? ?? ]",
+          "code": "char *s = malloc(4 * sizeof(char));\nif (!s)\n\treturn (NULL);",
+          "recall": "What does malloc return when it fails?",
+          "recallAnswer": "NULL. Always check it before using the pointer."
+        },
+        {
+          "title": "free(ptr)",
+          "definition": "free releases a block obtained from malloc. Call it exactly once per malloc. Afterwards the pointer still holds the old address (it dangles) but the memory is no longer yours.",
+          "metaphor": "Handing the unit back. The key in your pocket still shows the old number, but the unit now belongs to someone else.",
+          "visual": " [ ptr ] -x-> [ freed ]\n ptr = NULL;   (drop the stale key)",
+          "code": "free(s);\ns = NULL;",
+          "recall": "Why set the pointer to NULL after free?",
+          "recallAnswer": "free(NULL) is harmless, and an accidental use fails loudly instead of silently touching freed memory."
+        },
+        {
+          "title": "Leaks",
+          "definition": "A leak is heap memory that is still allocated but no longer reachable through any pointer, so it can never be freed.",
+          "metaphor": "Dropping the only key into a river. The unit is still yours, and nobody can open it.",
+          "visual": " s = malloc(8);   [ A ]\n s = malloc(16);  [ B ]   <- A has no pointer left",
+          "code": "char *s = malloc(8);\ns = malloc(16);",
+          "recall": "Which line makes the first block unreachable?",
+          "recallAnswer": "The second assignment. It overwrites the only pointer to the first block."
+        }
+      ],
+      "leak": {
+        "prompt": "Click the line that leaks memory.",
+        "code": "char\t*ft_dup(const char *src)\n{\n\tchar\t*copy;\n\tchar\t*tmp;\n\n\tcopy = malloc(ft_strlen(src) + 1);\n\ttmp = malloc(ft_strlen(src) + 1);\n\tif (!copy)\n\t\treturn (NULL);\n\tft_memcpy(copy, src, ft_strlen(src) + 1);\n\treturn (copy);\n}",
+        "answer": 7,
+        "hint": "Look for a block that is allocated but never used or freed.",
+        "explain": "tmp is allocated on line 7 and never freed or used. The block is lost the moment the function returns."
+      },
+      "peer": [
+        {
+          "q": "What happens if malloc returns NULL and you dereference it?",
+          "a": "Undefined behaviour, usually a segfault. Check every malloc, and free what you already allocated before returning NULL."
+        },
+        {
+          "q": "Stack versus heap: what is the difference?",
+          "a": "Stack memory is automatic and released when the function returns. Heap memory is managed manually with malloc/free and lives until you free it."
+        },
+        {
+          "q": "How do you check a program for leaks?",
+          "a": "Run it under valgrind --leak-check=full. Blocks reported as definitely lost are leaks. Every malloc needs a matching free."
+        },
+        {
+          "q": "Norminette: how long may a function be, and what else is limited?",
+          "a": "25 lines (braces not counted), 5 variables, 4 parameters and 80 columns per line."
+        },
+        {
+          "q": "Norminette: can you use for loops or ternaries?",
+          "a": "No. The Norm forbids for, do...while, switch, case, goto and ternary operators. Use while."
+        }
+      ]
+    },
+    {
+      "id": "pointers",
+      "title": "Pointers & arithmetic",
+      "xp": 30,
+      "cards": [
+        {
+          "title": "A pointer is an address",
+          "definition": "A pointer stores the memory address of another value. *p reads the value at that address and &x gives the address of x.",
+          "metaphor": "A house number on an envelope. The pointer is the number, the house is the value.",
+          "visual": " x = 42  @ 0x1000\n p = 0x1000 ---> [ 42 ]",
+          "code": "int x = 42;\nint *p = &x;\n*p = 7;   /* x is now 7 */",
+          "recall": "After *p = 7, what is x?",
+          "recallAnswer": "7. p points at x, so writing through p changes x."
+        },
+        {
+          "title": "Pointer arithmetic",
+          "definition": "Adding n to a pointer moves it by n elements, not n bytes. p + 1 advances by sizeof(*p) bytes.",
+          "metaphor": "Walking down a street. +1 means \"next house\", however wide the houses are.",
+          "visual": " int arr[3]\n [ a0 ][ a1 ][ a2 ]\n   p    p+1   p+2",
+          "code": "int *p = arr;\n*(p + 2) = 9;   /* same as arr[2] = 9 */",
+          "recall": "p is an int * at 0x1000 and sizeof(int) is 4. What is p + 3?",
+          "recallAnswer": "0x100C: three elements of 4 bytes each."
+        },
+        {
+          "title": "void * and raw bytes",
+          "definition": "A void * holds an address with no type, so you cannot dereference it or do arithmetic on it. Cast to unsigned char * to walk byte by byte, as ft_memcpy does.",
+          "metaphor": "A sealed box with an address label but no description. You must say \"treat it as bytes\" before you open it.",
+          "visual": " void *src --cast--> unsigned char *s\n [ b0 ][ b1 ][ b2 ] ...",
+          "code": "unsigned char *d = dst;\nconst unsigned char *s = src;\nwhile (n--)\n\t*d++ = *s++;",
+          "recall": "Why cast a void * to unsigned char * in ft_memcpy?",
+          "recallAnswer": "To step one byte at a time. Arithmetic on void * is not standard C."
+        }
+      ],
+      "leak": {
+        "prompt": "Click the line that uses a dangling pointer.",
+        "code": "int\tmain(void)\n{\n\tchar\t*s;\n\n\ts = malloc(6);\n\tft_strlcpy(s, \"hello\", 6);\n\tfree(s);\n\tft_putstr_fd(s, 1);\n\treturn (0);\n}",
+        "answer": 8,
+        "hint": "Something is used after it has been given back.",
+        "explain": "Line 8 reads s after free(s). The pointer still holds the old address, but the memory is no longer yours: use-after-free."
+      },
+      "peer": [
+        {
+          "q": "What does p + 1 do when p is an int *?",
+          "a": "It moves forward by sizeof(int) bytes, to the next int."
+        },
+        {
+          "q": "What is the difference between *p++ and (*p)++?",
+          "a": "*p++ reads the value at p and then advances the pointer. (*p)++ increments the value being pointed at."
+        },
+        {
+          "q": "Why can you not dereference a void *?",
+          "a": "The compiler does not know the size or type of the data it points to."
+        },
+        {
+          "q": "Norminette: where do variables get declared?",
+          "a": "At the top of the function, one declaration per line, and declaration and assignment cannot share a line (except for constants and statics)."
+        }
+      ]
+    },
+    {
+      "id": "lists",
+      "title": "Linked lists: t_list",
+      "xp": 40,
+      "cards": [
+        {
+          "title": "A node",
+          "definition": "A t_list node holds a payload (void *content) and a pointer to the next node. The last node's next pointer is NULL.",
+          "metaphor": "Train carriages. Each one carries cargo and a hook to the next carriage. The last hook is empty.",
+          "visual": " [content|*]->[content|*]->[content|NULL]",
+          "code": "typedef struct s_list\n{\n\tvoid\t\t\t*content;\n\tstruct s_list\t*next;\n}\t\t\t\tt_list;",
+          "recall": "What marks the end of the list?",
+          "recallAnswer": "A next pointer equal to NULL."
+        },
+        {
+          "title": "ft_lstadd_front",
+          "definition": "Make the new node point at the old head, then make the new node the head. Order matters: link first, then move the head.",
+          "metaphor": "Couple the new carriage to the front of the train before announcing it is the new engine.",
+          "visual": " new->next = *lst;   new -> [old head] -> ...\n *lst = new;        head = new",
+          "code": "new->next = *lst;\n*lst = new;",
+          "recall": "What breaks if you write *lst = new before new->next = *lst?",
+          "recallAnswer": "The old head is lost, new->next ends up pointing at new itself, and every old node leaks."
+        },
+        {
+          "title": "ft_lstclear",
+          "definition": "Walk the list. Save next BEFORE freeing the node, call del on the content, free the node, and finally set *lst to NULL.",
+          "metaphor": "Scrapping a train. Note where the next hook leads before you scrap this carriage, or you will never find the rest.",
+          "visual": " tmp = (*lst)->next;\n del((*lst)->content);\n free(*lst);  *lst = tmp;",
+          "code": "tmp = (*lst)->next;\ndel((*lst)->content);\nfree(*lst);\n*lst = tmp;",
+          "recall": "Why store next before calling free?",
+          "recallAnswer": "After free the node memory is invalid. Reading node->next afterwards is a use-after-free."
+        }
+      ],
+      "leak": {
+        "prompt": "Click the line that causes the leak.",
+        "code": "void\tft_lstclear(t_list **lst, void (*del)(void *))\n{\n\tt_list\t*tmp;\n\n\tif (!lst || !del)\n\t\treturn ;\n\twhile (*lst)\n\t{\n\t\ttmp = (*lst)->next;\n\t\tfree(*lst);\n\t\t*lst = tmp;\n\t}\n}",
+        "answer": 10,
+        "hint": "The node is freed, but what did it point to?",
+        "explain": "free(*lst) releases the node but never passes its content to del, so every payload leaks. Call del((*lst)->content) first."
+      },
+      "peer": [
+        {
+          "q": "How do you find the last node of a list?",
+          "a": "Loop while node->next is not NULL. ft_lstlast returns that node, or NULL for an empty list."
+        },
+        {
+          "q": "Why does ft_lstadd_back take a t_list **?",
+          "a": "The head may change when the list is empty, so the function needs the address of the head pointer."
+        },
+        {
+          "q": "What must ft_lstdelone do?",
+          "a": "Call del on the content, then free the node itself. It must not touch the following nodes."
+        },
+        {
+          "q": "What should ft_lstmap do when an allocation fails?",
+          "a": "Clear the partially built new list with ft_lstclear and return NULL, so nothing leaks."
+        }
+      ]
     }
   ]
 }

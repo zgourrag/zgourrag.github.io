@@ -252,6 +252,32 @@ button.card{text-align:left;color:var(--text);cursor:pointer}
 .rec{display:flex;gap:6px;margin:8px 0;align-items:center}.rec .field{margin:0}
 .lb{margin-top:8px;font-size:20px;min-width:200px}.lb div{display:flex;justify-content:space-between;border-bottom:1px dashed #777}
 @media(max-width:700px){#themename{display:none}#statusbar{font-size:17px}}
+
+/* ===== RESIZE GRIP + centered theme button ===== */
+.grip{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;touch-action:none;z-index:2;opacity:.75;
+  background:linear-gradient(135deg,transparent 50%,var(--text) 50% 58%,transparent 58% 66%,var(--text) 66% 74%,transparent 74%)}
+.win.max .grip{display:none}
+#tasks{flex:1 1 0;min-width:0}
+#tbright{flex:1 1 0;min-width:0;display:flex;justify-content:flex-end;gap:6px;height:100%}
+/* ===== cc.exe ===== */
+.cc{padding:12px;min-height:100%}
+.cchead{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:center;font-size:22px;margin-bottom:10px}
+.cchead b{color:var(--lime);font-size:26px}
+.ccbar{flex:1 1 100%;height:10px;border:2px solid var(--text);background:var(--card)}.ccbar i{display:block;height:100%;background:var(--lime)}
+.cc h3{font-weight:700;font-size:28px;color:var(--lime);margin-bottom:6px}
+.ccmod{display:block;width:100%;text-align:left;padding:8px 10px;margin-bottom:8px;border:2px solid var(--text);background:var(--card);color:var(--text);font-size:22px}
+.ccmod small{display:block;font-size:17px;opacity:.85}
+.ccmod:hover:not(:disabled){background:var(--lime);color:var(--on)}.ccmod:disabled{opacity:.45;cursor:not-allowed}
+.ccblock{border:2px solid var(--text);background:var(--card);padding:10px 12px;margin:10px 0}
+.ccst{margin:8px 0}.ccst small{display:block;font-size:16px;letter-spacing:1px;opacity:.7}.ccst p{font-size:21px;line-height:1.1}
+pre.ccode{background:#0b0b0b;color:#7CFF6B;padding:8px 10px;margin-top:6px;font:inherit;font-size:20px;overflow:auto;white-space:pre;tab-size:4}
+.ccnav{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ccl{display:block;width:100%;text-align:left;font:inherit;font-size:20px;padding:0 6px;background:#0b0b0b;color:#7CFF6B;white-space:pre;tab-size:4}
+.ccl:hover:not(:disabled){background:#1c3a1c}.ccl.bad{background:#4a1515;color:#ffb3b3}.ccl.good{background:#14461f;color:#fff}
+.ccl i{display:inline-block;width:2.2em;color:#888;font-style:normal}
+.ccmsg{margin:10px 0;padding:8px 10px;border:2px dashed var(--text);font-size:21px;line-height:1.1}
+.ccrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+@media (max-width:700px){.grip{display:none}#tbright{flex:0 0 auto}}
 </style>
 </head>
 <body>
@@ -293,8 +319,8 @@ button.card{text-align:left;color:var(--text);cursor:pointer}
   </button>
   <div id="tasks" aria-label="Open windows"></div>
   <button id="themebtn" type="button" title="Switch theme" aria-label="Switch theme">&#127912; <span id="themename"></span></button>
-  <button id="showdesk" type="button" title="Show Desktop" aria-label="Show Desktop">[_]</button>
-  <div id="clock">--:--</div>
+  <div id="tbright"><button id="showdesk" type="button" title="Show Desktop" aria-label="Show Desktop">[_]</button>
+  <div id="clock">--:--</div></div>
 </div>
 
 <script>
@@ -305,12 +331,15 @@ const LINKS = {
 };
 
 // Content lives in data.json (edited through /master). Loaded once; apps read these on open.
-let WORK = [], POSTS = [], WIP = [], TIPS = {}, IDLE = 'ready.';
+let WORK = [], POSTS = [], WIP = [], CCM = [], TIPS = {}, IDLE = 'ready.';
+const RELAY = {key:'', endpoint:'https://api.web3forms.com/submit'};   // newsletter routing (see data.json siteSettings)
 function applySettings(st){
   const $i = id => document.getElementById(id), set = (id, v) => { const e = $i(id); if (e && v) e.textContent = v; };
   if (st.siteTitle) document.title = st.siteTitle;
   ['github','linkedin','instagram','email'].forEach(k => { if (st[k]) LINKS[k] = st[k]; });
   if (st.cv) CV = st.cv;
+  if (st.relayAccessKey) RELAY.key = st.relayAccessKey;
+  if (st.relayEndpoint) RELAY.endpoint = st.relayEndpoint;
   set('pname', st.profileName); set('pintro', st.profileIntro); set('qtext', st.quoteText); set('qcite', st.quoteAuthor);
   const im = $i('profimg');
   if (im && st.profileImage) { im.onload = () => { im.hidden = false; }; im.onerror = () => { im.hidden = true; }; im.src = st.profileImage; }
@@ -323,6 +352,7 @@ const dataReady = fetch('data.json', {cache:'no-cache'})
     WORK = d.work || [];
     POSTS = (d.posts || []).slice().sort((a,b) => String(b.date).localeCompare(String(a.date)));   // newest first
     WIP = d.wip || [];
+    CCM = d.ccModules || [];
     applySettings(d.siteSettings || {});
   })
   .catch(err => console.warn('data.json could not be loaded (opening index.html from file:// does this):', err));
@@ -344,6 +374,7 @@ const ICO = {
 
 const emo = e => `<svg viewBox="0 0 44 44" aria-hidden="true"><text x="22" y="34" font-size="34" text-anchor="middle">${e}</text></svg>`;
 Object.assign(ICO, {exe:emo('💼'), txt:emo('📝'), dir:emo('🗂️'), lnk:emo('🔗'), links:emo('🔗'), blog:emo('📓'), vmpc:emo('🎧'), news:emo('📬'), term:emo('💻'), wall:emo('🧱'), snake:emo('🐍')});
+ICO.cc = emo('🧠');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 // Text helpers: CMS text uses blank lines between paragraphs; a paragraph that starts with "<" is kept as raw HTML
@@ -422,6 +453,7 @@ const ICONS = [
   {label:'Portfolio.exe',           icon:'exe',  app:'portfolio'},
   {label:'Blog.txt',                icon:'blog',  app:'blog'},
   {label:'Projects.dir'          , icon:'dir',  app:'wip'},
+  {label:'cc.exe',                  icon:'cc',   app:'cc'},
   {label:'VMPC.exe',                icon:'vmpc', app:'vmpc'},
   {label:'Terminal.exe',            icon:'term', app:'term'},
   {label:'Broadcast_Relay.exe',     icon:'news', app:'news'},
@@ -448,7 +480,8 @@ function openApp(id){
       <button class="ctl mn" aria-label="Minimize">_</button>
       <button class="ctl mx" aria-label="Maximize">&#9633;</button>
       <button class="ctl x"  aria-label="Close">&times;</button></header>
-    <div class="content">${app.html()}</div>`;
+    <div class="content">${app.html()}</div>
+    <div class="grip" aria-hidden="true"></div>`;
 
   const w = Math.min(app.w, innerWidth - 20), h = Math.min(app.h, desktop.clientHeight - 20);
   const off = (openCount++ % 6) * 28;
@@ -474,6 +507,7 @@ function openApp(id){
   const bar = el.querySelector('.bar');
   bar.addEventListener('dblclick', e => { if (!e.target.closest('.ctl') && !isMobile()) el.classList.toggle('max'); });
   makeDraggable(el, bar);
+  makeResizable(el);
   if (app.init) app.init(el);
   focusWin(id);
 }
@@ -528,6 +562,25 @@ function makeDraggable(win, handle){
     handle.addEventListener('pointermove', move);
     handle.addEventListener('pointerup', up);
     handle.addEventListener('pointercancel', up);
+  });
+}
+
+/* Resize from the bottom-right grip. Min size enforced; never past the viewport edge. */
+function makeResizable(win){
+  const MINW = 260, MINH = 160, grip = win.querySelector('.grip');
+  grip.addEventListener('pointerdown', e => {
+    if (isMobile() || win.classList.contains('max') || e.button > 0) return;
+    e.preventDefault(); e.stopPropagation();
+    const r = win.getBoundingClientRect(), d = desktop.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY, left = r.left - d.left, top = r.top - d.top;
+    grip.setPointerCapture(e.pointerId);
+    const move = ev => {
+      win.style.width  = Math.min(Math.max(r.width  + ev.clientX - sx, MINW), desktop.clientWidth  - left) + 'px';
+      win.style.height = Math.min(Math.max(r.height + ev.clientY - sy, MINH), desktop.clientHeight - top) + 'px';
+    };
+    const up = () => { grip.removeEventListener('pointermove', move); grip.removeEventListener('pointerup', up); grip.removeEventListener('pointercancel', up); };
+    grip.addEventListener('pointermove', move); grip.addEventListener('pointerup', up); grip.addEventListener('pointercancel', up);
+    focusWin(Object.keys(wins).find(k => wins[k].el === win));
   });
 }
 
@@ -694,13 +747,26 @@ Object.assign(APPS, {
       <div class="ok" role="status" hidden></div></form>`,
     init(win){
       const form = win.querySelector('form'), input = win.querySelector('input'), ok = win.querySelector('.ok');
-      form.addEventListener('submit', e => {
+      form.addEventListener('submit', async e => {
         e.preventDefault();
-        if (!input.checkValidity()) { ok.hidden = false; ok.textContent = 'Please enter a valid email address.'; return; }
-        // TODO: send input.value to your backend or form service here
-        input.value = '';
         ok.hidden = false;
-        ok.textContent = 'Subscribed. Welcome aboard, ' + (window.SESSION || 'Guest') + '!';
+        if (!input.checkValidity()) { ok.textContent = 'Please enter a valid email address.'; return; }
+        const email = input.value.trim(), btn = form.querySelector('button'), name = window.SESSION || 'Guest';
+        const formspree = /formspree\.io/.test(RELAY.endpoint);
+        if (!RELAY.key && !formspree) {                       // no endpoint configured yet
+          ok.textContent = 'Demo mode: no relay key set in data.json, so nothing was sent.'; input.value = ''; return;
+        }
+        btn.disabled = true; ok.textContent = 'Transmitting...';
+        try {
+          // Web3Forms emails the address registered with the access key (use gourragui@zakaryae.me); Formspree works the same way
+          const payload = formspree ? {email, name, _subject:'New Broadcast_Relay subscriber'}
+            : {access_key:RELAY.key, subject:'New Broadcast_Relay subscriber', from_name:'zakaryae.me', name, email, message:'New subscriber: ' + email};
+          const r = await fetch(RELAY.endpoint, {method:'POST', headers:{'Content-Type':'application/json', Accept:'application/json'}, body:JSON.stringify(payload)});
+          const j = await r.json().catch(() => ({}));
+          if (!(formspree ? r.ok : j.success)) throw new Error('relay rejected');
+          input.value = ''; ok.textContent = 'Subscribed. Welcome aboard, ' + name + '!';
+        } catch(err) { ok.textContent = 'Signal lost. Please try again in a moment.'; }
+        btn.disabled = false;
       });
     } },
 
@@ -1024,6 +1090,119 @@ Object.assign(APPS, {
 });
 
 /* =========================================================
+   cc.exe: Common Core learning engine. All content comes from data.json (ccModules).
+   Pedagogy: small "memory blocks" (cognitive load), definition + mental model (dual coding),
+   progressive reveal, active recall, a bug-spotting game and a peer-evaluation drill.
+   ========================================================= */
+const CC_KEY = 'zk-cc', CC_RANKS = ['Bit', 'Byte', 'Pointer', 'Heap Walker', 'Kernel'];
+const ccLoad = () => { try { return JSON.parse(localStorage.getItem(CC_KEY)) || {xp:0, done:{}}; } catch(e) { return {xp:0, done:{}}; } };
+const ccSave = st => { try { localStorage.setItem(CC_KEY, JSON.stringify(st)); } catch(e) {} };
+const CC_STAGE = {model:'mental model', code:'code', rq:'recall question', ra:'answer'};
+
+Object.assign(APPS, {
+  cc:{ title:'cc.exe', icon:'cc', w:680, h:560, html:() => '<div class="cc"></div>',
+    init(win){
+      const root = win.querySelector('.cc'), box = win.querySelector('.content');
+      let st = ccLoad(), v = {n:'home'};
+      const lvl = () => Math.floor(st.xp / 50), rank = () => CC_RANKS[Math.min(lvl(), CC_RANKS.length - 1)];
+      const done = (m, k) => !!(st.done[m.id] && st.done[m.id][k]);
+      const unlocked = i => i === 0 || done(CCM[i-1], 'leak');
+      const award = (m, k) => {                              // XP is granted once per activity
+        if (done(m, k)) return 0;
+        (st.done[m.id] = st.done[m.id] || {})[k] = true;
+        const gain = Math.round((m.xp || 30) * {cards:.2, leak:.3, peer:.5}[k]);
+        st.xp += gain; ccSave(st); return gain;
+      };
+      const cur = () => CCM[v.mi], tick = ok => ok ? '[x]' : '[ ]';
+      const head = () => `<div class="cchead"><b>cc.exe</b><span>Rank: ${esc(rank())} (Lv ${lvl() + 1})</span><span>${st.xp} XP</span>
+        <div class="ccbar" title="Progress to next level"><i style="width:${(st.xp % 50) * 2}%"></i></div></div>`;
+      const back = (a, label) => `<button class="btn" data-a="${a}">&lt;- ${label}</button>`;
+      const stagesOf = c => ['def', 'model', c.code && 'code', c.recall && 'rq', c.recallAnswer && 'ra'].filter(Boolean);
+
+      const views = {
+        home(){
+          if (!CCM.length) return '<p>No modules yet. Add some in /master under CC modules.</p>';
+          return '<h3>Modules</h3>' + CCM.map((m, i) => `<button class="ccmod" data-a="open" data-v="${i}" ${unlocked(i) ? '' : 'disabled'}>
+            <b>${unlocked(i) ? 'LV ' + (i + 1) : '[LOCKED]'}</b> ${esc(m.title)}
+            <small>${tick(done(m,'cards'))} blocks &nbsp;${tick(done(m,'leak'))} leak spotter &nbsp;${tick(done(m,'peer'))} defense${unlocked(i) ? '' : ' | pass the previous Leak Spotter to unlock'}</small></button>`).join('');
+        },
+        menu(){
+          const m = cur();
+          return `${back('home', 'Modules')}<h3 style="margin-top:10px">${esc(m.title)}</h3>${v.note ? `<div class="ccmsg">${esc(v.note)}</div>` : ''}
+            <button class="ccmod" data-a="blocks"><b>1. Memory Blocks</b> ${tick(done(m,'cards'))}<small>Short cards: definition, mental model, code, recall.</small></button>
+            <button class="ccmod" data-a="leak"><b>2. Memory Leak Spotter</b> ${tick(done(m,'leak'))}<small>Find the buggy line. Unlocks the next module.</small></button>
+            <button class="ccmod" data-a="peer"><b>3. Peer-Evaluation Simulator</b> ${tick(done(m,'peer'))}<small>Defend your work against evaluator questions and the Norm.</small></button>`;
+        },
+        cards(){
+          const m = cur(), cs = m.cards || [], c = cs[v.ci];
+          if (!c) return back('menu', 'Module') + '<p>No cards in this module yet.</p>';
+          const list = stagesOf(c), shown = list.slice(0, v.s + 1), lastStage = v.s >= list.length - 1, lastCard = v.ci >= cs.length - 1;
+          const html = {
+            def:   `<div class="ccst"><small>DEFINITION</small><p>${esc(c.definition)}</p></div>`,
+            model: `<div class="ccst"><small>MENTAL MODEL</small><p>${esc(c.metaphor)}</p>${c.visual ? `<pre class="ccode">${esc(c.visual)}</pre>` : ''}</div>`,
+            code:  `<div class="ccst"><small>CODE</small><pre class="ccode">${esc(c.code || '')}</pre></div>`,
+            rq:    `<div class="ccst"><small>RECALL: answer in your head first</small><p>${esc(c.recall || '')}</p></div>`,
+            ra:    `<div class="ccst"><small>ANSWER</small><p>${esc(c.recallAnswer || '')}</p></div>`
+          };
+          return `<div class="ccnav">${back('menu', 'Module')}<span>Block ${v.ci + 1}/${cs.length}</span></div>
+            <article class="ccblock"><h3>${esc(c.title)}</h3>${shown.map(k => html[k]).join('')}</article>` +
+            (!lastStage ? `<button class="btn" data-a="more">Reveal: ${CC_STAGE[list[v.s + 1]]}</button>`
+              : lastCard ? '<button class="btn" data-a="finish">Finish blocks</button>' : '<button class="btn" data-a="next">Next block -></button>');
+        },
+        leak(){
+          const m = cur(), L = m.leak || {code:'', answer:0}, lines = String(L.code).split('\n');
+          return `${back('menu', 'Module')}<h3 style="margin-top:10px">Memory Leak Spotter</h3><p>${esc(L.prompt || 'Click the line that causes the bug.')}</p>
+            <div style="margin:8px 0">${lines.map((t, k) => { const n = k + 1, cls = v.solved && n === +L.answer ? 'good' : (v.bad || []).includes(n) ? 'bad' : '';
+              return `<button class="ccl ${cls}" data-a="pick" data-v="${n}" ${v.solved ? 'disabled' : ''}><i>${n}</i>${esc(t)}</button>`; }).join('')}</div>` +
+            (v.solved ? `<div class="ccmsg"><b>Correct!</b> ${v.gain ? '+' + v.gain + ' XP. ' : ''}${esc(L.explain || '')}${CCM[v.mi + 1] ? ' Next module unlocked.' : ''}</div>`
+              : v.wrong ? `<div class="ccmsg">Not that line (${v.wrong} miss${v.wrong > 1 ? 'es' : ''}).${v.wrong > 1 && L.hint ? ' Hint: ' + esc(L.hint) : ''}</div>` : '');
+        },
+        peer(){
+          const m = cur(), Q = m.peer || [];
+          if (!Q.length) return back('menu', 'Module') + '<p>No evaluator questions yet.</p>';
+          if (v.over) {
+            const pass = v.ok / Q.length >= .8;
+            return `${back('menu', 'Module')}<h3 style="margin-top:10px">Defense ${pass ? 'passed' : 'failed'}: ${v.ok}/${Q.length}</h3>
+              <div class="ccmsg">${pass ? (v.gain ? '+' + v.gain + ' XP. ' : '') + 'Solid. You could survive this evaluation.' : 'The black hole is hungry. Review the Memory Blocks, then try again.'}
+              ${v.miss.length ? '<br>Review: ' + v.miss.map(esc).join(' | ') : ''}</div><button class="btn" data-a="peer">Run it again</button>`;
+          }
+          const q = Q[v.qi];
+          return `<div class="ccnav">${back('menu', 'Module')}<span>Question ${v.qi + 1}/${Q.length}</span></div>
+            <article class="ccblock"><div class="ccst"><small>EVALUATOR ASKS</small><p>${esc(q.q)}</p></div>${v.shown ? `<div class="ccst"><small>MODEL ANSWER</small><p>${esc(q.a)}</p></div>` : ''}</article>` +
+            (v.shown ? '<div class="ccrow"><button class="btn" data-a="yes">I could defend this</button><button class="btn" data-a="no">Need review</button></div>'
+                     : '<button class="btn" data-a="reveal">Reveal answer (after you answered out loud)</button>');
+        }
+      };
+      const show = () => { root.innerHTML = head() + views[v.n](); box.scrollTop = 0; };
+      const act = (a, val) => {
+        const m = cur();
+        if (a === 'home') v = {n:'home'};
+        else if (a === 'open') v = {n:'menu', mi:+val};
+        else if (a === 'menu') v = {n:'menu', mi:v.mi};
+        else if (a === 'blocks') v = {n:'cards', mi:v.mi, ci:0, s:0};
+        else if (a === 'more') v.s++;
+        else if (a === 'next') { v.ci++; v.s = 0; }
+        else if (a === 'finish') { const g = award(m, 'cards'); v = {n:'menu', mi:v.mi, note:'Memory Blocks complete.' + (g ? ' +' + g + ' XP' : '')}; }
+        else if (a === 'leak') v = {n:'leak', mi:v.mi, wrong:0, bad:[], solved:false};
+        else if (a === 'pick') {
+          if (v.solved) return; const n = +val;
+          if (n === +m.leak.answer) { v.solved = true; v.gain = award(m, 'leak'); } else { v.wrong++; v.bad.push(n); }
+        }
+        else if (a === 'peer') v = {n:'peer', mi:v.mi, qi:0, shown:false, ok:0, miss:[], over:false};
+        else if (a === 'reveal') v.shown = true;
+        else if (a === 'yes' || a === 'no') {
+          if (a === 'yes') v.ok++; else v.miss.push(m.peer[v.qi].q);
+          v.qi++; v.shown = false;
+          if (v.qi >= m.peer.length) { v.over = true; if (v.ok / m.peer.length >= .8) v.gain = award(m, 'peer'); }
+        }
+        show();
+      };
+      root.addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (b && !b.disabled) act(b.dataset.a, b.dataset.v); });
+      show();
+    } }
+});
+
+/* =========================================================
    Matrix rain columns (CSS does the falling; opacity is theme-controlled)
    ========================================================= */
 (function buildRain(){
@@ -1090,15 +1269,15 @@ function bootChime(){
     var en = document.getElementById('g-enter'), sk = document.getElementById('g-skip'), inp = document.getElementById('gate-name');
     if (en) en.addEventListener('click', function () { boot(inp ? inp.value : ''); });
     if (sk) sk.addEventListener('click', function () { boot('Guest'); });
-    var saved = null; try { saved = localStorage.getItem('zk-name'); } catch (e) {}
-    if (saved) { boot(saved); return; }
-    if (inp) { inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') boot(inp.value); }); inp.focus(); }
     var sd = document.getElementById('showdesk'), hid = [];
     if (sd) sd.addEventListener('click', function () {
       if (typeof wins === 'undefined') return;
       if (hid.length) { hid.forEach(function (id) { if (wins[id]) wins[id].el.classList.remove('min'); }); var k = hid[hid.length - 1]; hid = []; if (wins[k]) focusWin(k); }
       else Object.keys(wins).forEach(function (id) { if (!wins[id].el.classList.contains('min')) { wins[id].el.classList.add('min'); hid.push(id); } });
     });
+    var saved = null; try { saved = localStorage.getItem('zk-name'); } catch (e) {}
+    if (saved) { boot(saved); return; }
+    if (inp) { inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') boot(inp.value); }); inp.focus(); }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind); else bind();
 })();

@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title>OS Control Panel</title>
-  
-  <!-- Sveltia reads its settings from your existing config.yml -->
+
+  <!-- Sveltia reads its settings from config.yml in this folder -->
   <link href="config.yml" type="text/yaml" rel="cms-config-url">
 </head>
 <body>
-  <!-- Sveltia CMS script: handles GitHub OAuth entirely in the browser -->
+  <!-- Sveltia CMS runs entirely in the browser. On the login screen use "Sign In with Token"
+       (a GitHub personal access token with write access to the repo): no OAuth proxy needed. -->
   <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
 </body>
 </html>

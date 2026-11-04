@@ -1,4 +1,4 @@
-# Decap CMS config for zakaryae.me/master
+# Sveltia CMS config for zakaryae.me/master (Decap-compatible syntax)
 backend:
   name: github
   repo: zgourrag/zgourrag.github.io
@@ -19,7 +19,7 @@ collections:
     files:
       # ONE file entry on purpose: data.json holds all lists, so each entry must save the whole file.
       - name: data
-        label: Portfolio, Blog and Unfinished Projects
+        label: Site settings, Portfolio, Blog, Projects and cc.exe
         file: data.json
         fields:
           - label: Site settings
@@ -38,6 +38,9 @@ collections:
               - { label: GitHub URL, name: github, widget: string }
               - { label: LinkedIn URL, name: linkedin, widget: string }
               - { label: Instagram URL, name: instagram, widget: string }
+              - { label: Newsletter relay access key (Web3Forms; leave empty for demo mode), name: relayAccessKey, widget: string, required: false,
+                  hint: "Create a free key at web3forms.com using gourragui@zakaryae.me. The key decides who receives the emails." }
+              - { label: Newsletter relay endpoint (Web3Forms or a Formspree URL), name: relayEndpoint, widget: string, required: false }
               - { label: Status bar idle text, name: statusIdle, widget: string }
               - label: Status bar hints (shown when hovering an icon)
                 name: statusTips
@@ -83,3 +86,41 @@ collections:
               - { label: Status, name: status, widget: string }
               - { label: Note, name: note, widget: string }
               - { label: Modified, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+
+          - label: cc.exe study modules (Common Core)
+            name: ccModules
+            widget: list
+            required: false
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Id (short, no spaces, unique), name: id, widget: string }
+              - { label: Module title, name: title, widget: string }
+              - { label: XP for completing the whole module, name: xp, widget: number, value_type: int, min: 10, default: 30 }
+              - label: Memory blocks (short cards; keep each small)
+                name: cards
+                widget: list
+                summary: "{{fields.title}}"
+                fields:
+                  - { label: Title, name: title, widget: string }
+                  - { label: Definition (strict, technical), name: definition, widget: text }
+                  - { label: Mental model (visual metaphor), name: metaphor, widget: text }
+                  - { label: Diagram (plain text or ASCII art), name: visual, widget: text, required: false }
+                  - { label: Code snippet, name: code, widget: text, required: false }
+                  - { label: Recall question, name: recall, widget: string, required: false }
+                  - { label: Recall answer, name: recallAnswer, widget: text, required: false }
+              - label: Memory Leak Spotter
+                name: leak
+                widget: object
+                fields:
+                  - { label: Prompt, name: prompt, widget: string }
+                  - { label: Buggy code (one statement per line), name: code, widget: text }
+                  - { label: Buggy line number (1 = first line), name: answer, widget: number, value_type: int, min: 1 }
+                  - { label: Hint (shown after two misses), name: hint, widget: string, required: false }
+                  - { label: Explanation, name: explain, widget: text }
+              - label: Peer-evaluation questions
+                name: peer
+                widget: list
+                summary: "{{fields.q}}"
+                fields:
+                  - { label: Evaluator question, name: q, widget: string }
+                  - { label: Model answer, name: a, widget: text }
