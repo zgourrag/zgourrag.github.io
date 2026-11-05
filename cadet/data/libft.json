@@ -1,0 +1,156 @@
+{
+ "id": "libft",
+ "name": "The Libft Labyrinth",
+ "level": 1,
+ "tileSize": 32,
+ "badge": "libft_badge",
+ "requires": null,
+ "legend": {
+  "#": "wall",
+  ".": "floor",
+  "m": "iMac desk (solid)",
+  "z": "sleeping bag",
+  "g": "corrupted memory (bugs)",
+  "c": "coffee machine (heals)",
+  "t": "terminal (Enter)",
+  "P": "teleporter",
+  "1": "dungeon door",
+  "B": "boss door",
+  "e": "exit"
+ },
+ "rows": [
+  "################",
+  "#e..gg....#..c.#",
+  "#...gg....#....#",
+  "#.####..#####.##",
+  "#.#t...g.......#",
+  "#.#.#####.##.#.#",
+  "#...#...g.#....#",
+  "#.###.###.#.##.#",
+  "#.....g...#.t..#",
+  "#.#######.####.#",
+  "#c...g...g....B#",
+  "################"
+ ],
+ "spawn": {
+  "x": 2,
+  "y": 1
+ },
+ "returnTo": {
+  "x": 4,
+  "y": 8
+ },
+ "encounterRate": 0.22,
+ "encounterTable": [
+  "stray_pointer",
+  "memory_leak"
+ ],
+ "terminals": {
+  "3,4": "[terminal] ft_strlen(\"42\") returns 2. The terminating '\\0' does not count.",
+  "12,8": "[terminal] Every malloc needs a free. Every free needs a pointer you still own."
+ },
+ "enemies": {
+  "stray_pointer": {
+   "name": "Stray Pointer",
+   "glyph": "*?",
+   "hp": 5,
+   "atk": 3,
+   "xp": 15,
+   "weakness": "malloc",
+   "buff": null,
+   "blurb": "Points somewhere it should not."
+  },
+  "memory_leak": {
+   "name": "Memory Leak",
+   "glyph": "...",
+   "hp": 5,
+   "atk": 2,
+   "xp": 20,
+   "weakness": "free",
+   "buff": "regen",
+   "leaks": true,
+   "blurb": "Drips your memory every turn."
+  }
+ },
+ "questions": [
+  {
+   "id": "q-void-size",
+   "q": "What is the size of `void *` on a 64-bit system?",
+   "options": [
+    "4 bytes",
+    "8 bytes",
+    "16 bytes",
+    "It depends on what it points to"
+   ],
+   "answer": 1,
+   "explain": "Every data pointer is one machine word on a 64-bit system: 8 bytes."
+  },
+  {
+   "id": "q-strdup-size",
+   "q": "Which call reserves room for a copy of the string s?",
+   "options": [
+    "malloc(ft_strlen(s))",
+    "malloc(ft_strlen(s) + 1)",
+    "malloc(sizeof(s))",
+    "malloc(sizeof(char *))"
+   ],
+   "answer": 1,
+   "explain": "You need one extra byte for the terminating '\\0'. sizeof(s) is only the pointer size."
+  },
+  {
+   "id": "q-after-free",
+   "q": "After free(p); what does p contain?",
+   "options": [
+    "NULL",
+    "The old address (dangling)",
+    "0xDEADBEEF",
+    "Whatever the OS decides"
+   ],
+   "answer": 1,
+   "explain": "free does not change p. It still holds the old address, so set it to NULL yourself."
+  }
+ ],
+ "boss": {
+  "name": "The Mouinette",
+  "alias": "The Void Pointer",
+  "xp": 100,
+  "timeLimitMs": 60000,
+  "wrongPenaltyMs": 5000,
+  "intro": "The Mouinette studies your code. Find the line that segfaults before time runs out.",
+  "snippets": [
+   {
+    "lines": [
+     "char\t*buf = malloc(4);",
+     "ft_strlcpy(buf, \"42\", 4);",
+     "free(buf);",
+     "buf[0] = 'X';",
+     "return (0);"
+    ],
+    "bugLine": 4,
+    "explain": "Line 4 writes to buf after free(buf): use-after-free."
+   },
+   {
+    "lines": [
+     "int\t*arr = malloc(3 * sizeof(int));",
+     "arr[0] = 1;",
+     "arr[1] = 2;",
+     "arr[3] = 4;",
+     "free(arr);"
+    ],
+    "bugLine": 4,
+    "explain": "arr has indices 0 to 2. arr[3] writes past the end of the heap block."
+   },
+   {
+    "lines": [
+     "char\t*s = NULL;",
+     "int\ti = 0;",
+     "while (i < 3)",
+     "\ti++;",
+     "s[i] = 'a';"
+    ],
+    "bugLine": 5,
+    "explain": "s is NULL. Writing through it dereferences a null pointer."
+   }
+  ]
+ }
+}

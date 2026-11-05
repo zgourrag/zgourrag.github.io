@@ -1,0 +1,30 @@
+.cdt{position:relative;min-height:100%;background:#0b0f14;color:#cfe8cf;font-family:"VT323","Courier New",monospace;font-size:20px;line-height:1.1;outline:none;display:flex;flex-direction:column}
+.cdt button,.cdt select,.cdt input{font:inherit;color:inherit}
+.cdt-hud{display:flex;flex-wrap:wrap;gap:2px 14px;padding:4px 8px;background:#101a24;border-bottom:2px solid #46d4e8;font-size:18px}
+.cdt-stage{position:relative;flex:1;padding:8px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.cdt-map{width:100%;max-width:576px;height:auto;image-rendering:pixelated;border:2px solid #2d3142}
+.cdt-say{padding:6px 10px;min-height:2.4em;background:#101a24;border-top:2px solid #2d3142}
+.cdt-feed{position:absolute;top:10px;right:10px;max-width:60%;padding:4px 8px;font-size:16px;text-align:right;background:rgba(0,0,0,.65);border:1px solid #46d4e8;pointer-events:none}
+.cdt-dpad{display:flex;gap:6px;justify-content:center;padding:6px}
+.cdt-dpad button{width:44px;height:36px;background:#1b2838;border:2px solid #46d4e8;cursor:pointer}
+.cdt-dpad button:active{background:#46d4e8;color:#0b0f14}
+.cdt-boot{margin:auto;display:flex;flex-direction:column;gap:10px;padding:20px;max-width:420px}
+.cdt-boot input,.cdt-boot select{background:#000;border:2px solid #46d4e8;padding:4px 8px}
+.cdt-boot button,.cdt-go,.cdt-spells button,.cdt-quiz button{background:#1b2838;border:2px solid #46d4e8;padding:4px 10px;cursor:pointer;text-align:left}
+.cdt-boot button:disabled,.cdt-spells button:disabled,.cdt-code button:disabled{opacity:.5;cursor:not-allowed}
+.cdt-boot button:hover:not(:disabled),.cdt-go:hover,.cdt-spells button:hover:not(:disabled),.cdt-quiz button:hover{background:#46d4e8;color:#0b0f14}
+.cdt-battle{width:100%;max-width:576px;display:flex;flex-direction:column;gap:8px;margin-top:34px}
+.cdt-foe{display:flex;gap:12px;align-items:center}
+.cdt-sprite{margin:0;color:#ff6b6b;font:inherit}
+.cdt-tag{margin-left:6px;padding:0 6px;border:1px solid #ffd166;color:#ffd166;font-size:16px}
+.cdt-log{min-height:8.4em;padding:6px 8px;background:#000;border:2px solid #2d3142}
+.cdt-spells,.cdt-quiz{display:flex;flex-direction:column;gap:6px}
+.cdt-quiz{padding:8px;border:2px dashed #ffd166}
+.cdt-timer{font-size:28px;color:#7CFF6B}.cdt-timer.low{color:#ff6b6b}
+.cdt-code{display:flex;flex-direction:column}
+.cdt-code button{background:#000;color:#7CFF6B;text-align:left;border:0;padding:0 6px;white-space:pre;tab-size:4;cursor:pointer}
+.cdt-code button:hover:not(:disabled){background:#1c3a1c}
+.cdt-code .bad{background:#4a1515;color:#ffb3b3}.cdt-code .good{background:#14461f;color:#fff}
+.cdt-code i{display:inline-block;width:2em;color:#888;font-style:normal}
+.cdt-crt{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.18) 3px)}
+@media (max-width:700px){.cdt-feed{position:static;max-width:100%;text-align:left}}

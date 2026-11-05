@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Add this in your <head> -->
+<link rel="stylesheet" href="cadet/dist/cadet.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>zakaryae-os // portfolio</title>
@@ -280,6 +282,14 @@ pre.ccode{background:#0b0b0b;color:#7CFF6B;padding:8px 10px;margin-top:6px;font:
 @media (max-width:700px){.grip{display:none}#tbright{flex:0 0 auto}}
 </style>
 </head>
+<!-- Add this right before </body> -->
+<script>
+  window.CADET_CONFIG = {
+    url: 'YOUR_SUPABASE_URL',
+    key: 'YOUR_SUPABASE_ANON_KEY' 
+  };
+</script>
+<script src="cadet/dist/cadet.js"></script>
 <body>
 
 <div id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-q">
@@ -511,6 +521,31 @@ function openApp(id){
   if (app.init) app.init(el);
   focusWin(id);
 }
+
+//
+function openCadetExe() {
+    // 1. Create your OS window (adjust classes to match your existing OS style)
+    const win = document.createElement('div');
+    win.classList.add('os-window');
+    
+    // 2. Create the container Claude's code looks for
+    const content = document.createElement('div');
+    content.classList.add('content'); 
+    win.appendChild(content);
+    
+    document.body.appendChild(win);
+
+    // 3. Mount the game and get the cleanup function
+    const unmountGame = window.CADET.mount(content);
+
+    // 4. Clean up the React app when the OS window closes
+    const closeButton = win.querySelector('.close-btn'); // Change to your actual close button class
+    closeButton.addEventListener('click', () => {
+        unmountGame(); 
+        win.remove();
+    });
+}
+//
 
 // Keep window z-indexes far below the taskbar (90000) even after thousands of clicks
 function restack(){
